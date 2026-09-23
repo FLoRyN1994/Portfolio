@@ -1,47 +1,68 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Portfolio — Florin Tomozei
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+Personal portfolio website for Florin Tomozei, a software engineer with ~10 years of experience specializing in Drupal (Acquia certified) and Laravel.
 
-## Prerequisites
+## Stack
 
-Verify that PHP and Composer are available:
+- **Framework**: Laravel 13
+- **Admin panel**: Filament 3 (at `/admin`)
+- **Frontend**: Livewire 3 + Alpine.js + Tailwind CSS
+- **Animations**: GSAP (ScrollTrigger, SplitText)
+- **Database**: MySQL (production) / SQLite (local dev)
+- **Hosting**: Railway
+- **CI/CD**: GitHub Actions → Railway (`.github/workflows/deploy.yml`)
 
-```sh
-php -v
-composer -V
+## Local Development
+
+```bash
+php artisan serve        # start dev server
+npm run dev              # Vite asset watcher
+php artisan migrate      # run migrations
 ```
 
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
+## Project Structure
 
-macOS:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
+```
+app/
+  Filament/Resources/   # admin panel resources (Projects, Posts, TIL)
+  Http/Livewire/        # Livewire components
+  Models/               # Project, Post, TilPost, etc.
+resources/
+  views/
+    pages/              # Home, About, Projects, Blog, TIL, Contact
+    components/         # reusable Blade components
+    livewire/           # Livewire views
+  css/app.css           # Tailwind + custom styles
+  js/app.js             # Alpine.js + GSAP init
 ```
 
-Windows PowerShell:
+## Pages
 
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
+| Route | Description |
+|---|---|
+| `/` | Hero, intro, stack, featured projects |
+| `/about` | Bio, timeline, Acquia cert, skills bento grid |
+| `/projects` | Portfolio grid |
+| `/projects/{slug}` | Case study detail |
+| `/blog` | Long-form articles |
+| `/til` | Today I Learned snippets |
+| `/contact` | Contact form |
+| `/admin` | Filament admin panel |
 
-Linux:
+## Design
 
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
+- Dark theme (`#0a0a0f` background)
+- Glassmorphism cards (`backdrop-blur` + `rgba` backgrounds)
+- Bento grid layout for skills/about sections
+- GSAP scroll-triggered animations
+- macOS dock-style navigation
+- Color accent: electric blue `#3b82f6`
 
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
+## CI/CD
 
-## Agent Setup
+Push to `main` → GitHub Actions runs tests → deploys to Railway.
+Set `RAILWAY_TOKEN` secret in GitHub repo settings.
 
-Install Laravel Boost from the application root before making application changes:
+## GitHub
 
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
-
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
+Repository: https://github.com/FLoRyN1994/Portfolio
