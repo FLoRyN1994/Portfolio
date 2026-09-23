@@ -1,7 +1,10 @@
 name: Deploy to Railway
 
 on:
-  workflow_dispatch: # manually trigger only — Railway account not set up yet
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test:
