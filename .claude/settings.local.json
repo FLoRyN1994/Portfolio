@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github__get_me",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"Fix CI: bump Node to 22, sync package-lock.json:*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"Fix CI: skip optional npm deps to avoid react peer dep conflict:*)",
+      "Bash(git commit -m \"Fix CI: use npm install instead of npm ci to avoid lock file sync issues:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm run:*)",
+      "Bash(railway status:*)",
+      "Bash(railway service:*)",
+      "Bash(git commit -m \"Fix Railway deploy: specify service and environment:*)",
+      "Bash(git commit:*)",
+      "Bash(php artisan:*)",
+      "Bash(alias php=/Applications/MAMP/bin/php/php8.3.0/bin/php)",
+      "Bash(/Applications/MAMP/bin/php/php8.3.0/bin/php artisan:*)",
+      "Bash(echo:*)"
+    ]
+  }
+}
