@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     protected $fillable = [
-        'title', 'slug', 'excerpt', 'content', 'cover_image', 'tags', 'published_at',
+        'title', 'slug', 'excerpt', 'content', 'cover_image', 'tags', 'published_at', 'featured',
     ];
 
     protected $casts = [
-        'tags' => 'array',
+        'tags'         => 'array',
         'published_at' => 'datetime',
+        'featured'     => 'boolean',
     ];
 
     public function scopePublished($query)

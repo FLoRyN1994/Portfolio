@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Florin Tomozei — Drupal Developer' }}</title>
     <meta name="description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     @fonts
     {{-- Fraunces italic variant (bunny plugin bundles normal only) --}}
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
