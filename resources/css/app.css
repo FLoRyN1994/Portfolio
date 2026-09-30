@@ -132,7 +132,7 @@
     }
 
     .animate-marquee-paused,
-    .group\/marquee:hover .animate-marquee {
+    .marquee-container:hover .animate-marquee {
         animation-play-state: paused;
     }
 

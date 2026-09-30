@@ -6,6 +6,9 @@
     <title>{{ $title ?? 'Florin Tomozei — Drupal Developer' }}</title>
     <meta name="description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
     @fonts
+    {{-- Fraunces italic variant (bunny plugin bundles normal only) --}}
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:ital,wght@1,400;1,500&display=swap">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen" x-data>

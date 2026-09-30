@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Models\Agency;
 use App\Models\Project;
 use App\Models\Post;
 use App\Models\TilPost;
@@ -9,6 +10,7 @@ use App\Models\TilPost;
 Route::get('/', function () {
     return view('pages.home', [
         'projects' => Project::featured()->get(),
+        'agencies' => Agency::orderBy('sort_order')->get(),
     ]);
 });
 
