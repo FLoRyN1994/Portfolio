@@ -9,8 +9,8 @@ use App\Models\TilPost;
 
 Route::get('/', function () {
     return view('pages.home', [
-        'projects' => Project::featured()->get(),
-        'agencies' => Agency::orderBy('sort_order')->get(),
+        'agencies'  => Agency::orderBy('sort_order')->get(),
+        'platforms' => Project::published()->with('agency')->orderBy('sort_order')->get(),
     ]);
 });
 
@@ -20,12 +20,15 @@ Route::get('/about', function () {
 
 Route::get('/projects', function () {
     return view('pages.projects.index', [
-        'projects' => Project::orderBy('sort_order')->get(),
+        'projects' => Project::published()->with('agency')->orderBy('sort_order')->get(),
     ]);
 });
 
 Route::get('/projects/{slug}', function ($slug) {
-    $project = Project::where('slug', $slug)->firstOrFail();
+    $project = Project::where('slug', $slug)
+        ->where('published', true)
+        ->with('agency')
+        ->firstOrFail();
     return view('pages.projects.show', compact('project'));
 });
 
@@ -52,11 +55,11 @@ Route::get('/contact', function () {
 
 Route::post('/contact', function (Request $request) {
     $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
+        'name'    => 'required|string|max:255',
+        'email'   => 'required|email|max:255',
         'message' => 'required|string|max:5000',
     ]);
 
-    // TODO: send mail
+    // TODO: send mail (wired in Prompt 5)
     return back()->with('success', 'Thanks! I\'ll get back to you soon.');
 });
