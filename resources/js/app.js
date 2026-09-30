@@ -123,6 +123,52 @@ function initOrbs() {
     });
 }
 
+// Journey timeline: scrubs a progress line and reveals nodes
+function initJourney() {
+    if (prefersReducedMotion()) return;
+
+    const section = document.querySelector('[data-journey]');
+    if (!section) return;
+
+    const line = section.querySelector('[data-journey-line]');
+    const nodes = section.querySelectorAll('[data-journey-node]');
+
+    if (line) {
+        gsap.fromTo(line,
+            { scaleX: 0 },
+            {
+                scaleX: 1,
+                ease: 'none',
+                transformOrigin: 'left center',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 65%',
+                    end: 'center 45%',
+                    scrub: 1.2,
+                },
+            }
+        );
+    }
+
+    nodes.forEach((node, i) => {
+        gsap.fromTo(node,
+            { opacity: 0, y: 14 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                delay: i * 0.08,
+                scrollTrigger: {
+                    trigger: node,
+                    start: 'top 85%',
+                    once: true,
+                },
+            }
+        );
+    });
+}
+
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -130,4 +176,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initReveal();
     initScrollAnimations();
     initOrbs();
+    initJourney();
 });

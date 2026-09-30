@@ -5,12 +5,16 @@ use Illuminate\Http\Request;
 use App\Models\Agency;
 use App\Models\Project;
 use App\Models\Post;
+use App\Models\SkillCategory;
 use App\Models\TilPost;
 
 Route::get('/', function () {
+    $agencies = Agency::orderBy('sort_order')->get();
     return view('pages.home', [
-        'agencies'  => Agency::orderBy('sort_order')->get(),
+        'agencies'  => $agencies,
         'platforms' => Project::published()->with('agency')->orderBy('sort_order')->get(),
+        'skills'    => SkillCategory::orderBy('sort_order')->get(),
+        'journey'   => $agencies,
     ]);
 });
 

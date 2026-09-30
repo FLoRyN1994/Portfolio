@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AgencySeeder::class,
             ProjectPlatformSeeder::class,
+            SkillCategorySeeder::class,
         ]);
 
         User::firstOrCreate(

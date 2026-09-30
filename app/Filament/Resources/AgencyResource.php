@@ -23,11 +23,14 @@ class AgencyResource extends Resource
             Forms\Components\Section::make()->schema([
                 Forms\Components\TextInput::make('name')->required(),
                 Forms\Components\TextInput::make('url')->url()->required()->label('Website URL'),
+                Forms\Components\TextInput::make('period')->nullable()->label('Period (e.g. 2019 – 2021)')->placeholder('Leave empty until confirmed'),
+                Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
+                Forms\Components\Textarea::make('description')->nullable()->rows(2)->columnSpanFull()->label('Role / description (optional)'),
                 Forms\Components\FileUpload::make('logo_path')
                     ->image()
                     ->directory('agencies')
-                    ->label('Logo (optional)'),
-                Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
+                    ->label('Logo (optional)')
+                    ->columnSpanFull(),
             ])->columns(2),
         ]);
     }

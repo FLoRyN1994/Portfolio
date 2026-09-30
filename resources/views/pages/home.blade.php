@@ -262,9 +262,127 @@
     </div>
 </section>
 
-{{-- Placeholder anchors for future sections (Prompts 4–5) --}}
-<div id="skills"></div>
-<div id="journey"></div>
+{{-- ═══════════════════════════════════════════════════════
+     SKILLS — Bento grid
+═══════════════════════════════════════════════════════ --}}
+<section id="skills" data-section="skills" class="py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="mb-14" data-reveal>
+            <x-section-label>What I bring</x-section-label>
+            <h2 class="font-display text-4xl md:text-5xl text-text mt-3 leading-tight">Skills &amp; tools</h2>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-auto">
+            @foreach($skills as $skill)
+            @php
+                $colClass = match((int)$skill->col_span) {
+                    2 => 'col-span-2',
+                    3 => 'col-span-2 lg:col-span-3',
+                    4 => 'col-span-2 lg:col-span-4',
+                    default => 'col-span-2 sm:col-span-1',
+                };
+                $borderClass = match($skill->variant) {
+                    'accent' => 'border-accent/30 bg-accent/5',
+                    'warm'   => 'border-warm/30 bg-warm/5',
+                    default  => 'border-line bg-surface',
+                };
+                $labelClass = match($skill->variant) {
+                    'accent' => 'text-accent',
+                    'warm'   => 'text-warm',
+                    default  => 'text-muted',
+                };
+            @endphp
+            <div class="{{ $colClass }} rounded-3xl border {{ $borderClass }} p-6 flex flex-col gap-4"
+                 data-reveal data-reveal-delay="{{ $loop->index * 0.07 }}">
+                <h3 class="font-semibold text-text text-base">{{ $skill->name }}</h3>
+
+                @if($skill->description)
+                    <p class="text-muted text-sm leading-relaxed flex-1">{{ $skill->description }}</p>
+                @endif
+
+                @if(count($skill->items ?? []))
+                <div class="flex flex-wrap gap-2 mt-auto">
+                    @foreach($skill->items as $item)
+                        @if($skill->variant === 'accent')
+                            <x-chip>{{ $item }}</x-chip>
+                        @elseif($skill->variant === 'warm')
+                            <span class="font-mono text-xs px-2 py-1 rounded-md bg-warm/10 border border-warm/20 text-warm">{{ $item }}</span>
+                        @else
+                            <span class="font-mono text-xs px-2 py-1 rounded-md bg-surface-2 border border-line text-muted">{{ $item }}</span>
+                        @endif
+                    @endforeach
+                </div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+
+{{-- ═══════════════════════════════════════════════════════
+     JOURNEY — Agency timeline
+═══════════════════════════════════════════════════════ --}}
+@if($journey->count())
+<section id="journey" data-section="journey" class="py-24 px-6" data-journey>
+    <div class="max-w-6xl mx-auto">
+
+        <div class="mb-14" data-reveal>
+            <x-section-label>My path</x-section-label>
+            <h2 class="font-display text-4xl md:text-5xl text-text mt-3 leading-tight">Agency journey</h2>
+        </div>
+
+        {{-- Desktop: horizontal timeline --}}
+        <div class="hidden md:block relative">
+            {{-- Progress line --}}
+            <div class="absolute top-7 left-0 right-0 h-px bg-line overflow-hidden">
+                <div class="absolute inset-0 bg-accent origin-left" data-journey-line style="transform: scaleX(0)"></div>
+            </div>
+
+            <div class="relative grid gap-6" style="grid-template-columns: repeat({{ $journey->count() }}, 1fr)">
+                @foreach($journey as $agency)
+                <div class="flex flex-col gap-3 pt-3" data-journey-node>
+                    {{-- Node dot --}}
+                    <div class="w-3.5 h-3.5 rounded-full bg-accent border-2 border-bg ring-2 ring-accent/30 mx-auto mb-4 relative z-10"></div>
+
+                    <div class="text-center space-y-1">
+                        @if($agency->period)
+                        <p class="font-mono text-xs text-accent tracking-wider">{{ $agency->period }}</p>
+                        @endif
+                        <h3 class="font-semibold text-text text-sm">{{ $agency->name }}</h3>
+                        @if($agency->description)
+                        <p class="text-muted text-xs leading-relaxed">{{ $agency->description }}</p>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Mobile: vertical stack --}}
+        <div class="md:hidden relative pl-6 border-l border-line space-y-8">
+            @foreach($journey as $agency)
+            <div class="relative" data-reveal data-reveal-delay="{{ $loop->index * 0.08 }}">
+                <div class="absolute -left-[1.6rem] top-1.5 w-3 h-3 rounded-full bg-accent border-2 border-bg ring-2 ring-accent/30"></div>
+                <div class="space-y-1">
+                    @if($agency->period)
+                    <p class="font-mono text-xs text-accent tracking-wider">{{ $agency->period }}</p>
+                    @endif
+                    <h3 class="font-semibold text-text text-sm">{{ $agency->name }}</h3>
+                    @if($agency->description)
+                    <p class="text-muted text-xs leading-relaxed">{{ $agency->description }}</p>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+@endif
+
+{{-- Notes placeholder for Prompt 5 --}}
 <div id="notes"></div>
 
 </x-layout>
