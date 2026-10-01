@@ -1,5 +1,6 @@
 <x-layout>
 <x-slot:title>About — Florin Tomozei</x-slot:title>
+<x-slot:description>About Florin Tomozei — Acquia-certified Drupal developer with 9+ years of experience building complex digital platforms for agencies and their clients.</x-slot:description>
 
 <main class="pb-32 pt-16 px-6">
     <div class="max-w-4xl mx-auto">

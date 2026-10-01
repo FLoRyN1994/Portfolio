@@ -137,7 +137,11 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .animate-marquee { animation: none; }
+        .animate-marquee,
+        .bounce-slow,
+        .orb {
+            animation: none !important;
+        }
     }
 
     /* Decorative animations */

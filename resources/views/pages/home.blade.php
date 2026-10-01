@@ -2,6 +2,8 @@
 <x-slot:title>Florin Tomozei — Drupal Developer</x-slot:title>
 <x-slot:description>Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them. Acquia-certified, full-stack, based in Romania.</x-slot:description>
 
+<main>
+
 {{-- ═══════════════════════════════════════════════════════
      HERO
 ═══════════════════════════════════════════════════════ --}}
@@ -149,7 +151,7 @@
                 rel="noopener noreferrer"
                 class="flex-none flex items-center gap-3 px-5 py-2.5 rounded-xl border border-line bg-surface text-muted hover:text-text hover:border-accent/30 hover:bg-surface-2 font-medium text-sm transition-all duration-200 whitespace-nowrap">
                 @if($agency->logo_path)
-                    <img src="{{ Storage::url($agency->logo_path) }}" alt="{{ $agency->name }} logo" class="h-5 w-auto opacity-70">
+                    <img src="{{ Storage::url($agency->logo_path) }}" alt="{{ $agency->name }} logo" class="h-5 w-auto opacity-70" loading="lazy">
                 @endif
                 {{ $agency->name }}
             </a>
@@ -514,5 +516,7 @@
 
     </div>
 </section>
+
+</main>
 
 </x-layout>

@@ -6,6 +6,35 @@
     <title>{{ $title ?? 'Florin Tomozei — Drupal Developer' }}</title>
     <meta name="description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $title ?? 'Florin Tomozei — Drupal Developer' }}">
+    <meta property="og:description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <meta property="og:image" content="{{ asset('badge.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $title ?? 'Florin Tomozei — Drupal Developer' }}">
+    <meta name="twitter:description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <meta name="twitter:image" content="{{ asset('badge.png') }}">
+
+    <!-- JSON-LD Person -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Person",
+        "name": "Florin Tomozei",
+        "url": "{{ url('/') }}",
+        "jobTitle": "Drupal Developer",
+        "description": "Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.",
+        "sameAs": [
+            "{{ config('portfolio.linkedin_url') }}",
+            "{{ config('portfolio.calendly_url') }}"
+        ]
+    }
+    </script>
     @fonts
     {{-- Fraunces italic variant (bunny plugin bundles normal only) --}}
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -13,6 +42,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen" x-data>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">
+        Skip to main content
+    </a>
 
     @php
         $currentPath = '/' . request()->path();
@@ -62,7 +94,7 @@
             <a
                 href="{{ $bookHref }}"
                 class="px-4 py-1.5 rounded-full text-sm font-semibold bg-accent text-white hover:bg-accent/90 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
-                @if($bookExternal) target="_blank" rel="noopener noreferrer" @endif>
+                {!! $bookExternal ? 'target="_blank" rel="noopener noreferrer"' : '' !!}>
                 Book a call
             </a>
 
@@ -115,7 +147,7 @@
     </nav>
 
     {{-- Page content (offset for fixed nav) --}}
-    <div class="pt-16">
+    <div id="main-content" class="pt-16">
         {{ $slot }}
     </div>
 

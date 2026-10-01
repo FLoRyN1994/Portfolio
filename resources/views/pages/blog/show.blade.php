@@ -1,5 +1,6 @@
 <x-layout>
 <x-slot:title>{{ $post->title }} — Florin Tomozei</x-slot:title>
+<x-slot:description>{{ $post->excerpt ?? 'An article by Florin Tomozei on Drupal, PHP, and web development.' }}</x-slot:description>
 
 <main class="pb-32 pt-16 px-6">
     <div class="max-w-3xl mx-auto">
@@ -11,7 +12,7 @@
         <article>
             <header class="mb-10" data-animate>
                 @if($post->cover_image)
-                <img src="{{ $post->cover_image }}" alt="{{ $post->title }}" class="w-full h-56 object-cover rounded-2xl mb-8 opacity-90">
+                <img src="{{ $post->cover_image }}" alt="{{ $post->title }}" class="w-full h-56 object-cover rounded-2xl mb-8 opacity-90" loading="lazy">
                 @endif
                 <h1 class="text-4xl font-semibold tracking-tight mb-4">{{ $post->title }}</h1>
                 <div class="flex items-center gap-4">

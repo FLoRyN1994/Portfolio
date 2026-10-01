@@ -60,3 +60,12 @@ Route::get('/contact', function () {
 });
 
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:6,1');
+
+Route::get('/sitemap.xml', function () {
+    $posts    = Post::published()->latest('published_at')->get();
+    $tilPosts = TilPost::published()->latest('published_at')->get();
+    $projects = Project::published()->orderBy('sort_order')->get();
+
+    return response()->view('sitemap', compact('posts', 'tilPosts', 'projects'))
+        ->header('Content-Type', 'application/xml');
+});

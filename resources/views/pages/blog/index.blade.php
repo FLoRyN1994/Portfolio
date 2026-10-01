@@ -1,5 +1,6 @@
 <x-layout>
 <x-slot:title>Blog — Florin Tomozei</x-slot:title>
+<x-slot:description>Long-form articles on Drupal, PHP, and web development — from architecture decisions to debugging deep dives.</x-slot:description>
 
 <main class="pb-32 pt-16 px-6">
     <div class="max-w-3xl mx-auto">
