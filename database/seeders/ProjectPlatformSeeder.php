@@ -16,6 +16,7 @@ class ProjectPlatformSeeder extends Seeder
                 'url'        => 'https://ecolint.ch',
                 'role'       => 'Full-stack developer',
                 'summary'    => 'Full-stack development on the public Ecolint website, delivered with an agency partner.',
+                'thumbnail'  => '/projects/ecolint.jpg',
                 'published'  => true,
                 'sort_order' => 1,
             ],
@@ -25,6 +26,7 @@ class ProjectPlatformSeeder extends Seeder
                 'url'        => 'https://swatchgroup.com',
                 'role'       => 'Full-stack developer',
                 'summary'    => 'Full-stack development on the public Swatch Group website, delivered with an agency partner.',
+                'thumbnail'  => '/projects/swatch-group.svg',
                 'published'  => true,
                 'sort_order' => 2,
             ],
@@ -34,6 +36,7 @@ class ProjectPlatformSeeder extends Seeder
                 'url'        => 'https://blancpain.com',
                 'role'       => 'Full-stack developer',
                 'summary'    => 'Full-stack development on the public Blancpain website, delivered with an agency partner.',
+                'thumbnail'  => '/projects/blancpain.jpg',
                 'published'  => true,
                 'sort_order' => 3,
             ],
@@ -43,13 +46,14 @@ class ProjectPlatformSeeder extends Seeder
                 'url'        => 'https://flowit.ai',
                 'role'       => 'Full-stack developer',
                 'summary'    => 'Full-stack development on the public Flowit website, delivered with an agency partner.',
+                'thumbnail'  => '/projects/flowit.png',
                 'published'  => true,
                 'sort_order' => 4,
             ],
         ];
 
         foreach ($platforms as $data) {
-            Project::firstOrCreate(['slug' => $data['slug']], $data);
+            Project::updateOrCreate(['slug' => $data['slug']], $data);
         }
     }
 }
