@@ -35,6 +35,15 @@
         ]
     }
     </script>
+    @if(config('portfolio.google_analytics_id'))
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('portfolio.google_analytics_id') }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ config('portfolio.google_analytics_id') }}');
+    </script>
+    @endif
     @fonts
     {{-- Fraunces italic variant (bunny plugin bundles normal only) --}}
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>

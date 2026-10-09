@@ -6,4 +6,5 @@ return [
     'contact_email'       => env('CONTACT_EMAIL', ''),
     'recaptcha_site_key'  => env('RECAPTCHA_SITE_KEY', ''),
     'recaptcha_secret_key'=> env('RECAPTCHA_SECRET_KEY', ''),
+    'google_analytics_id' => env('GOOGLE_ANALYTICS_ID', ''),
 ];
