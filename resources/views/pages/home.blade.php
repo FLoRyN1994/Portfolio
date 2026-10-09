@@ -150,7 +150,7 @@
            aria-label="{{ $agency->name }}"
            class="flex items-center justify-center h-[50px] px-4 rounded-xl bg-surface border border-line hover:border-accent/30 hover:bg-surface-2 transition-all duration-200">
             @if($agency->logo_path)
-                <img src="{{ Storage::url($agency->logo_path) }}" alt="{{ $agency->name }}" class="h-[32px] w-auto max-w-[140px] object-contain" loading="lazy">
+                <img src="{{ asset($agency->logo_path) }}" alt="{{ $agency->name }}" class="h-[32px] w-auto max-w-[140px] object-contain" loading="lazy">
             @else
                 <span class="font-mono text-xs text-muted">{{ $agency->name }}</span>
             @endif
