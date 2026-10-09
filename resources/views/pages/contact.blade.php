@@ -75,7 +75,7 @@
                 </div>
                 @endif
 
-                <form action="/contact" method="POST"
+                <form action="/contact" method="POST" id="contact-form"
                       class="bg-surface border border-line rounded-3xl p-8 space-y-6">
                     @csrf
 
@@ -84,6 +84,8 @@
                         <label for="website">Leave this blank</label>
                         <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
                     </div>
+
+                    <input type="hidden" name="recaptcha_token" id="recaptcha_token">
 
                     <div>
                         <label for="contact-name" class="block font-mono text-xs text-muted tracking-wider uppercase mb-2">Name</label>
@@ -117,11 +119,38 @@
                         @enderror
                     </div>
 
-                    <button type="submit"
-                            class="w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-medium text-sm rounded-xl transition-colors">
+                    <button type="submit" id="contact-submit"
+                            class="w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-medium text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         Send message
                     </button>
+
+                    <p class="text-muted/40 text-xs text-center">
+                        Protected by reCAPTCHA —
+                        <a href="https://policies.google.com/privacy" target="_blank" class="underline hover:text-muted/60">Privacy</a> &amp;
+                        <a href="https://policies.google.com/terms" target="_blank" class="underline hover:text-muted/60">Terms</a>
+                    </p>
                 </form>
+
+                @if(config('portfolio.recaptcha_site_key'))
+                <script src="https://www.google.com/recaptcha/api.js?render={{ config('portfolio.recaptcha_site_key') }}"></script>
+                <script>
+                    const form = document.getElementById('contact-form');
+                    const tokenInput = document.getElementById('recaptcha_token');
+                    const submitBtn = document.getElementById('contact-submit');
+
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        submitBtn.disabled = true;
+                        grecaptcha.ready(function () {
+                            grecaptcha.execute('{{ config('portfolio.recaptcha_site_key') }}', { action: 'contact' })
+                                .then(function (token) {
+                                    tokenInput.value = token;
+                                    form.submit();
+                                });
+                        });
+                    });
+                </script>
+                @endif
 
             </div>
 
