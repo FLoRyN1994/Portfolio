@@ -10,6 +10,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+            AgencySeeder::class,
+            ProjectPlatformSeeder::class,
+            SkillCategorySeeder::class,
+        ]);
+
         User::firstOrCreate(
             ['email' => env('ADMIN_EMAIL', 'admin@portofolio.local')],
             [

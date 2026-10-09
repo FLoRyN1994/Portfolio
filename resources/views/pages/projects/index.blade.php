@@ -1,52 +1,84 @@
 <x-layout>
 <x-slot:title>Projects — Florin Tomozei</x-slot:title>
+<x-slot:description>A selection of client platforms and digital products I've contributed to as a full-stack Drupal developer.</x-slot:description>
 
-<main class="pb-32 pt-16 px-6">
-    <div class="max-w-5xl mx-auto">
+<main class="py-20 px-6 min-h-screen">
+    <div class="max-w-6xl mx-auto">
 
-        <div class="mb-16 text-center" data-animate>
-            <h1 class="text-4xl md:text-6xl font-semibold tracking-tight mb-4 text-gradient">Projects</h1>
-            <p class="text-gray-400 text-lg">A selection of things I've built.</p>
+        {{-- Header --}}
+        <div class="mb-16" data-reveal>
+            <x-section-label>Portfolio</x-section-label>
+            <h1 class="font-display text-5xl md:text-6xl text-text mt-3 leading-tight">Client platforms</h1>
+            <p class="text-muted mt-4 text-lg max-w-xl leading-relaxed">
+                A selection of digital platforms I've contributed to as a full-stack developer, working with agencies and their clients.
+            </p>
         </div>
 
         @if($projects->count())
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @foreach($projects as $project)
-            <a href="/projects/{{ $project->slug }}" class="glass glass-hover p-6 block group" data-animate>
-                @if($project->thumbnail)
-                <img src="{{ $project->thumbnail }}" alt="{{ $project->title }}" class="w-full h-44 object-cover rounded-lg mb-5 opacity-80 group-hover:opacity-100 transition-opacity">
-                @else
-                <div class="w-full h-44 rounded-lg mb-5 bg-white/5 flex items-center justify-center">
-                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                </div>
-                @endif
-                <div class="flex items-start justify-between gap-4 mb-2">
-                    <h2 class="text-lg font-semibold group-hover:text-blue-400 transition-colors">{{ $project->title }}</h2>
-                    <div class="flex gap-2 shrink-0">
-                        @if($project->github_url)
-                        <span class="text-gray-500 hover:text-white text-xs transition-colors">GitHub ↗</span>
-                        @endif
+            <div class="relative group bg-surface border border-line rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-accent/20 hover:shadow-2xl hover:shadow-bg/50"
+                 data-reveal data-reveal-delay="{{ $loop->index * 0.07 }}">
+
+                {{-- Browser frame --}}
+                <x-browser-frame url="{{ $project->url }}">
+                    @if($project->thumbnail)
+                    <img
+                        src="{{ $project->thumbnail }}"
+                        alt="{{ $project->title }} website"
+                        class="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-translate-y-2"
+                        loading="lazy">
+                    @else
+                    <div class="absolute inset-0 flex items-center justify-center select-none">
+                        <div class="absolute inset-0 bg-gradient-to-br from-accent/8 to-warm/5"></div>
+                        <span class="relative font-mono text-xs text-muted/50">{{ parse_url($project->url, PHP_URL_HOST) }}</span>
+                    </div>
+                    @endif
+                </x-browser-frame>
+
+                {{-- Card body --}}
+                <div class="p-6">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                            <h2 class="text-text font-semibold text-lg leading-snug">{{ $project->title }}</h2>
+                            <p class="text-muted text-sm mt-0.5">{{ $project->role }}</p>
+                        </div>
                         @if($project->url)
-                        <span class="text-gray-500 hover:text-white text-xs transition-colors">Live ↗</span>
+                        <a href="{{ $project->url }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="flex-none font-mono text-xs text-muted hover:text-accent transition-colors mt-0.5 z-10 relative"
+                           aria-label="Visit {{ $project->title }} website">
+                            Visit site ↗
+                        </a>
                         @endif
                     </div>
+
+                    @if($project->agency)
+                    <p class="font-mono text-xs text-muted mb-3">via {{ $project->agency->name }}</p>
+                    @endif
+
+                    <p class="text-muted text-sm leading-relaxed mb-4">{{ $project->summary }}</p>
+
+                    @if($project->tech_stack)
+                    <div class="flex flex-wrap gap-2">
+                        @foreach(array_slice((array) $project->tech_stack, 0, 5) as $tech)
+                        <x-chip>{{ $tech }}</x-chip>
+                        @endforeach
+                    </div>
+                    @endif
                 </div>
-                <p class="text-gray-400 text-sm leading-relaxed mb-4">{{ $project->summary }}</p>
-                @if($project->tech_stack)
-                <div class="flex flex-wrap gap-2">
-                    @foreach(array_slice($project->tech_stack, 0, 5) as $tech)
-                    <span class="tag">{{ $tech }}</span>
-                    @endforeach
-                </div>
-                @endif
-            </a>
+
+                {{-- Full-card link --}}
+                <a href="/projects/{{ $project->slug }}"
+                   class="absolute inset-0 z-0 rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                   aria-label="View {{ $project->title }} case study"></a>
+            </div>
             @endforeach
         </div>
         @else
-        <div class="glass p-24 text-center text-gray-500" data-animate>
-            Projects coming soon.
+        <div class="py-32 text-center" data-reveal>
+            <p class="text-muted text-sm font-mono">No projects published yet.</p>
         </div>
         @endif
 

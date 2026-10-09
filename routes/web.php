@@ -1,14 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Models\Project;
+use App\Http\Controllers\ContactController;
+use App\Models\Agency;
 use App\Models\Post;
+use App\Models\Project;
+use App\Models\SkillCategory;
 use App\Models\TilPost;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    $agencies = Agency::orderBy('sort_order')->get();
     return view('pages.home', [
-        'projects' => Project::featured()->get(),
+        'agencies'      => $agencies,
+        'platforms'     => Project::published()->with('agency')->orderBy('sort_order')->get(),
+        'skills'        => SkillCategory::orderBy('sort_order')->get(),
+        'journey'       => $agencies,
+        'featured_post' => Post::published()->where('featured', true)->latest('published_at')->first(),
+        'til_posts'     => TilPost::published()->latest('published_at')->take(3)->get(),
     ]);
 });
 
@@ -18,12 +26,15 @@ Route::get('/about', function () {
 
 Route::get('/projects', function () {
     return view('pages.projects.index', [
-        'projects' => Project::orderBy('sort_order')->get(),
+        'projects' => Project::published()->with('agency')->orderBy('sort_order')->get(),
     ]);
 });
 
 Route::get('/projects/{slug}', function ($slug) {
-    $project = Project::where('slug', $slug)->firstOrFail();
+    $project = Project::where('slug', $slug)
+        ->where('published', true)
+        ->with('agency')
+        ->firstOrFail();
     return view('pages.projects.show', compact('project'));
 });
 
@@ -48,13 +59,13 @@ Route::get('/contact', function () {
     return view('pages.contact');
 });
 
-Route::post('/contact', function (Request $request) {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255',
-        'message' => 'required|string|max:5000',
-    ]);
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:6,1');
 
-    // TODO: send mail
-    return back()->with('success', 'Thanks! I\'ll get back to you soon.');
+Route::get('/sitemap.xml', function () {
+    $posts    = Post::published()->latest('published_at')->get();
+    $tilPosts = TilPost::published()->latest('published_at')->get();
+    $projects = Project::published()->orderBy('sort_order')->get();
+
+    return response()->view('sitemap', compact('posts', 'tilPosts', 'projects'))
+        ->header('Content-Type', 'application/xml');
 });

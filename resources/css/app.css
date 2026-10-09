@@ -4,45 +4,48 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-    --color-bg: #0a0a0f;
-    --color-surface: rgba(255, 255, 255, 0.04);
-    --color-border: rgba(255, 255, 255, 0.08);
-    --color-accent: #3b82f6;
-    --color-text-primary: #f0f0f0;
-    --color-text-muted: #6b7280;
+    --color-bg:        #0a0c13;
+    --color-surface:   #11141f;
+    --color-surface-2: #171b29;
+    --color-line:      #232838;
+    --color-text:      #ece9e1;
+    --color-muted:     #9aa1b5;
+    --color-accent:    #4f8cff;
+    --color-warm:      #f3b664;
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-sans:    'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
 }
 
 @layer base {
     html { scroll-behavior: smooth; }
 
     body {
-        background-color: #0a0a0f;
-        color: var(--color-text-primary);
+        background-color: var(--color-bg);
+        color: var(--color-text);
         font-family: var(--font-sans);
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
     }
-
-    /* Subtle dot grid background */
-    body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
-        background-size: 32px 32px;
-        pointer-events: none;
-        z-index: 0;
-    }
 }
 
 @layer components {
+    /* Blueprint grid – faint 64px crosshatch for hero backgrounds */
+    .blueprint-grid {
+        background-image:
+            linear-gradient(rgba(79, 140, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(79, 140, 255, 0.04) 1px, transparent 1px);
+        background-size: 64px 64px;
+    }
+
+    /* Glass surface */
     .glass {
-        background: rgba(255, 255, 255, 0.04);
+        background: rgba(17, 20, 31, 0.75);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 1rem;
+        border: 1px solid var(--color-line);
+        border-radius: 1.5rem;
     }
 
     .glass-hover {
@@ -50,18 +53,20 @@
     }
 
     .glass-hover:hover {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(23, 27, 41, 0.9);
+        border-color: rgba(79, 140, 255, 0.25);
         transform: translateY(-2px);
     }
 
+    /* Text gradient (legacy – kept for existing pages) */
     .text-gradient {
-        background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
+        background: linear-gradient(135deg, var(--color-text) 0%, var(--color-muted) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
 
+    /* Tech tag / chip (legacy – kept for existing pages) */
     .tag {
         display: inline-flex;
         align-items: center;
@@ -69,58 +74,87 @@
         border-radius: 9999px;
         font-size: 0.7rem;
         font-weight: 500;
-        letter-spacing: 0.02em;
-        background: rgba(59, 130, 246, 0.08);
-        border: 1px solid rgba(59, 130, 246, 0.18);
+        font-family: var(--font-mono);
+        letter-spacing: 0.04em;
+        background: rgba(79, 140, 255, 0.08);
+        border: 1px solid rgba(79, 140, 255, 0.18);
         color: #93c5fd;
         transition: background 0.2s, border-color 0.2s;
     }
 
     .tag:hover {
-        background: rgba(59, 130, 246, 0.15);
-        border-color: rgba(59, 130, 246, 0.3);
+        background: rgba(79, 140, 255, 0.15);
+        border-color: rgba(79, 140, 255, 0.3);
     }
 
-    /* Prose dark overrides */
-    .prose-dark {
-        color: #d1d5db;
-    }
+    /* Dark prose overrides */
+    .prose-dark { color: var(--color-muted); }
 
-    .prose-dark h1, .prose-dark h2, .prose-dark h3 {
-        color: #f9fafb;
-    }
+    .prose-dark h1,
+    .prose-dark h2,
+    .prose-dark h3 { color: var(--color-text); }
+
+    .prose-dark a { color: var(--color-accent); }
 
     .prose-dark code {
-        background: rgba(255,255,255,0.06);
+        background: rgba(79, 140, 255, 0.08);
         padding: 0.15em 0.4em;
         border-radius: 4px;
         font-size: 0.875em;
-    }
-
-    .prose-dark a {
-        color: #60a5fa;
+        font-family: var(--font-mono);
     }
 
     .prose-dark pre {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--color-surface);
+        border: 1px solid var(--color-line);
         border-radius: 0.75rem;
     }
 
-    /* Scroll indicator bounce */
+    /* scroll-triggered reveal – GSAP sets opacity/transform on init;
+       this rule ensures the element is visible when JS/GSAP is absent */
+    @media (prefers-reduced-motion: reduce) {
+        [data-reveal],
+        [data-animate],
+        [data-hero] {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    }
+
+    /* Marquee for agency ribbon (Prompt 2) */
+    @keyframes marquee {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
+    }
+
+    .animate-marquee {
+        animation: marquee 36s linear infinite;
+    }
+
+    .animate-marquee-paused,
+    .marquee-container:hover .animate-marquee {
+        animation-play-state: paused;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .animate-marquee,
+        .bounce-slow,
+        .orb {
+            animation: none !important;
+        }
+    }
+
+    /* Decorative animations */
     @keyframes bounce-slow {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(6px); }
+        50%       { transform: translateY(6px); }
     }
 
-    .bounce-slow {
-        animation: bounce-slow 2s ease-in-out infinite;
-    }
+    .bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
 
-    /* Orb pulse */
     @keyframes orb-pulse {
         0%, 100% { opacity: 0.12; transform: scale(1); }
-        50% { opacity: 0.2; transform: scale(1.05); }
+        50%       { opacity: 0.2;  transform: scale(1.05); }
     }
 
     .orb {

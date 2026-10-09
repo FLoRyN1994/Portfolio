@@ -1,66 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Florin Tomozei — Software Engineer' }}</title>
-    <meta name="description" content="{{ $description ?? 'Software Engineer with ~10 years of experience in Drupal and Laravel.' }}">
+    <title>{{ $title ?? 'Florin Tomozei — Drupal Developer' }}</title>
+    <meta name="description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $title ?? 'Florin Tomozei — Drupal Developer' }}">
+    <meta property="og:description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <meta property="og:image" content="{{ asset('badge.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $title ?? 'Florin Tomozei — Drupal Developer' }}">
+    <meta name="twitter:description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <meta name="twitter:image" content="{{ asset('badge.png') }}">
+
+    <!-- JSON-LD Person -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Person",
+        "name": "Florin Tomozei",
+        "url": "{{ url('/') }}",
+        "jobTitle": "Drupal Developer",
+        "description": "Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.",
+        "sameAs": [
+            "{{ config('portfolio.linkedin_url') }}",
+            "{{ config('portfolio.calendly_url') }}"
+        ]
+    }
+    </script>
     @fonts
+    {{-- Fraunces italic variant (bunny plugin bundles normal only) --}}
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:ital,wght@1,400;1,500&display=swap">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen relative" x-data>
+<body class="min-h-screen" x-data>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">
+        Skip to main content
+    </a>
 
-    <div class="relative z-10">
+    @php
+        $currentPath = '/' . request()->path();
+        $isHome      = $currentPath === '/';
+        $bookHref    = config('portfolio.calendly_url') ?: '/contact';
+        $bookExternal = (bool) config('portfolio.calendly_url');
+
+        $navLinks = [
+            ['id' => 'hero',    'label' => 'Home',    'href' => '/',                              'route' => '/'],
+            ['id' => 'work',    'label' => 'Work',    'href' => $isHome ? '#work'    : '/#work'],
+            ['id' => 'skills',  'label' => 'Skills',  'href' => $isHome ? '#skills'  : '/#skills'],
+            ['id' => 'journey', 'label' => 'Journey', 'href' => $isHome ? '#journey' : '/#journey'],
+            ['id' => 'notes',   'label' => 'Notes',   'href' => $isHome ? '#notes'   : '/#notes'],
+            ['id' => 'contact', 'label' => 'Contact', 'href' => '/contact',                        'route' => '/contact'],
+        ];
+    @endphp
+
+    {{-- Floating pill navigation --}}
+    <nav
+        x-data="pillNav({{ $isHome ? 'true' : 'false' }})"
+        x-init="init()"
+        class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+        aria-label="Main navigation">
+
+        {{-- Pill --}}
+        <div class="pointer-events-auto relative flex items-center gap-px px-1.5 py-1.5 rounded-full border border-line/50 bg-bg/88 backdrop-blur-xl shadow-xl">
+
+            {{-- Desktop links --}}
+            <div class="hidden md:flex items-center gap-px">
+                @foreach($navLinks as $link)
+                    @php $isActiveRoute = isset($link['route']) && $currentPath === $link['route']; @endphp
+                    <a
+                        href="{{ $link['href'] }}"
+                        data-nav-section="{{ $link['id'] }}"
+                        class="px-3 py-1.5 rounded-full text-sm font-medium transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent/60
+                            {{ !$isHome && $isActiveRoute ? 'text-text bg-surface-2' : 'text-muted hover:text-text' }}"
+                        :class="{{ $isHome ? "activeSection === '{$link['id']}' ? 'text-text bg-surface-2' : ''" : "''" }}">
+                        {{ $link['label'] }}
+                    </a>
+                @endforeach
+            </div>
+
+            {{-- Divider (desktop only) --}}
+            <div class="hidden md:block w-px h-4 bg-line mx-1" aria-hidden="true"></div>
+
+            {{-- Book a call --}}
+            <a
+                href="{{ $bookHref }}"
+                class="px-4 py-1.5 rounded-full text-sm font-semibold bg-accent text-white hover:bg-accent/90 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                {!! $bookExternal ? 'target="_blank" rel="noopener noreferrer"' : '' !!}>
+                Book a call
+            </a>
+
+            {{-- Mobile hamburger --}}
+            <button
+                class="md:hidden ml-1 p-2 rounded-full text-muted hover:text-text transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                @click="mobileOpen = !mobileOpen"
+                :aria-expanded="mobileOpen.toString()"
+                aria-controls="mobile-nav"
+                aria-label="Toggle navigation menu">
+                <svg x-show="!mobileOpen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg x-show="mobileOpen" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- Mobile dropdown --}}
+        <div
+            id="mobile-nav"
+            x-show="mobileOpen"
+            x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+            @click.outside="mobileOpen = false"
+            @keydown.escape.window="mobileOpen = false"
+            class="pointer-events-auto absolute top-[calc(100%+0.5rem)] left-1/2 -translate-x-1/2 w-52 rounded-2xl border border-line bg-surface/95 backdrop-blur-xl shadow-2xl overflow-hidden"
+            role="menu"
+            aria-label="Mobile navigation">
+            <ul class="py-2">
+                @foreach($navLinks as $link)
+                <li role="none">
+                    <a
+                        href="{{ $link['href'] }}"
+                        @click="mobileOpen = false"
+                        class="block px-4 py-2.5 text-sm font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors"
+                        role="menuitem">
+                        {{ $link['label'] }}
+                    </a>
+                </li>
+                @endforeach
+            </ul>
+        </div>
+    </nav>
+
+    {{-- Page content (offset for fixed nav) --}}
+    <div id="main-content" class="pt-16">
         {{ $slot }}
     </div>
 
-    {{-- macOS Dock Navigation --}}
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
-         x-data="dock()"
-         @mousemove="handleMouseMove($event)"
-         @mouseleave="reset()">
-
-        <div class="flex items-end gap-1 px-4 py-3 glass rounded-2xl shadow-2xl">
-            @php
-                $currentPath = request()->path();
-                $navItems = [
-                    ['/', 'Home', 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
-                    ['/about', 'About', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
-                    ['/projects', 'Projects', 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
-                    ['/blog', 'Blog', 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
-                    ['/til', 'TIL', 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'],
-                    ['/contact', 'Contact', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
-                ];
-            @endphp
-
-            @foreach($navItems as $item)
-                @php
-                    $href = $item[0];
-                    $label = $item[1];
-                    $path = $item[2];
-                    $isActive = ($href === '/' && $currentPath === '/')
-                        || ($href !== '/' && str_starts_with('/' . $currentPath, $href));
-                @endphp
-                <a href="{{ $href }}"
-                   class="dock-item group relative flex flex-col items-center px-1">
-                    <div class="dock-icon w-11 h-11 flex items-center justify-center rounded-xl transition-colors duration-200 origin-bottom
-                        {{ $isActive ? 'bg-blue-500/20 text-blue-400' : 'text-gray-400 hover:text-white hover:bg-white/8' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="{{ $path }}" />
-                        </svg>
-                    </div>
-                    {{-- Tooltip --}}
-                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 text-xs glass rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none text-white">
-                        {{ $label }}
-                    </span>
-                    {{-- Active dot --}}
-                    @if($isActive)
-                    <span class="absolute -bottom-0.5 w-1 h-1 rounded-full bg-blue-400"></span>
-                    @endif
-                </a>
-            @endforeach
+    {{-- Footer --}}
+    <footer class="border-t border-line mt-24 py-12 px-6">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-muted">
+            <p class="font-mono text-xs tracking-wide">© {{ date('Y') }} Florin Tomozei</p>
+            <nav class="flex items-center gap-6" aria-label="Footer navigation">
+                <a href="/about"   class="hover:text-text transition-colors">About</a>
+                <a href="/blog"    class="hover:text-text transition-colors">Blog</a>
+                <a href="/til"     class="hover:text-text transition-colors">TIL</a>
+                <a href="/contact" class="hover:text-text transition-colors">Contact</a>
+            </nav>
         </div>
-    </nav>
+    </footer>
 
 </body>
 </html>

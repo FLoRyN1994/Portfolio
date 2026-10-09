@@ -1,5 +1,6 @@
 <x-layout>
 <x-slot:title>TIL — Florin Tomozei</x-slot:title>
+<x-slot:description>Short, practical things I learn day-to-day as a Drupal and PHP developer — snippets, gotchas, and useful patterns.</x-slot:description>
 
 <main class="pb-32 pt-16 px-6">
     <div class="max-w-3xl mx-auto">

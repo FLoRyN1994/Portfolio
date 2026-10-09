@@ -42,6 +42,7 @@ class PostResource extends Resource
                     ->directory('posts'),
                 Forms\Components\TagsInput::make('tags'),
                 Forms\Components\DateTimePicker::make('published_at')->label('Publish at'),
+                Forms\Components\Toggle::make('featured')->label('Featured on homepage'),
             ])->columns(3),
         ]);
     }
@@ -54,6 +55,7 @@ class PostResource extends Resource
                 Tables\Columns\TextColumn::make('tags')
                     ->badge()
                     ->separator(','),
+                Tables\Columns\IconColumn::make('featured')->boolean(),
                 Tables\Columns\TextColumn::make('published_at')->dateTime()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
