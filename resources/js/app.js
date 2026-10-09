@@ -42,6 +42,133 @@ function pillNav(isHomePage) {
 
 window.pillNav = pillNav;
 
+// Interactive terminal widget
+window.terminalWidget = function () {
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+    const t = (text, cls = 'text-text') => ({ html: esc(text), cls });
+    const h = (html, cls = 'text-text') => ({ html, cls });
+
+    const CMDS = {
+        help: () => [
+            h('  <span class="text-warm">Available commands</span>'),
+            t('  whoami       ·  About me',                'text-muted'),
+            t('  skills       ·  Tech stack',              'text-muted'),
+            t('  experience   ·  Work history',            'text-muted'),
+            t('  contact      ·  Get in touch',            'text-muted'),
+            t('  ls           ·  Portfolio sections',      'text-muted'),
+            t('  clear        ·  Clear screen',            'text-muted'),
+        ],
+        whoami: () => [
+            h('  <span class="text-warm font-semibold">Florin Tomozei</span><span class="text-muted"> · PHP / Drupal Developer</span>'),
+            t(''),
+            t('  9 years building large-scale Drupal platforms for agencies.'),
+            t('  Acquia Certified · Bacau, Romania · Open to remote work.', 'text-muted'),
+        ],
+        skills: () => [
+            h('  <span class="text-accent">→ CMS / Backend</span>'),
+            t('  Drupal 8/9/10 · PHP 8+ · Symfony · Laravel · REST API'),
+            t(''),
+            h('  <span class="text-accent">→ Frontend</span>'),
+            t('  React · TypeScript · JavaScript · Twig · SCSS'),
+            t(''),
+            h('  <span class="text-accent">→ DevOps & Tools</span>'),
+            t('  Docker · AWS · Acquia Cloud · Git · Linux · TDD'),
+        ],
+        experience: () => [
+            h('  <span class="text-warm">2018 – present</span>  Drupal Developer <span class="text-muted">@ REEA, Iași</span>'),
+            t('                  Custom modules · Symfony arch · REST APIs · Docker', 'text-muted'),
+            t(''),
+            h('  <span class="text-warm">2024 – 2025</span>     PHP/Drupal Developer <span class="text-muted">@ Holycode</span>'),
+            t('                  Platform stability · SSO integration · Enterprise arch', 'text-muted'),
+            t(''),
+            h('  <span class="text-warm">2017 – 2018</span>     PHP/Drupal Developer <span class="text-muted">@ Softescu</span>'),
+            t('                  Drupal 7–8 · Custom modules · Theming', 'text-muted'),
+        ],
+        contact: () => [
+            h('  <span class="text-muted">email   </span>  <a href="mailto:florintomozei23@gmail.com" class="text-accent hover:underline">florintomozei23@gmail.com</a>'),
+            h('  <span class="text-muted">linkedin</span>  <a href="https://linkedin.com/in/florin-tomozei1994" target="_blank" class="text-accent hover:underline">linkedin.com/in/florin-tomozei1994</a>'),
+            t('  location   Bacau, Romania', 'text-muted'),
+        ],
+        ls: () => [
+            h('  <a href="#work" class="text-accent hover:underline">work/</a>       client platforms'),
+            h('  <a href="#skills" class="text-accent hover:underline">skills/</a>     tech stack &amp; tools'),
+            h('  <a href="#notes" class="text-accent hover:underline">notes/</a>      blog &amp; TIL'),
+            h('  <a href="#contact" class="text-accent hover:underline">contact/</a>    reach out'),
+        ],
+    };
+
+    const EASTER = {
+        'sudo':             '  Permission denied.',
+        'sudo rm -rf /':    '  Portfolio intact. 🛡️',
+        'exit':             "  There's no escape — you're already home.",
+        'quit':             "  There's no escape — you're already home.",
+        'npm install':      '  npm: command not found. (Try PHP instead.)',
+        'composer install': '  Composer is for the server, not your browser.',
+        'vim':              "  :q! — you're not getting trapped here.",
+        'git log':          '  Try `experience` instead.',
+    };
+
+    return {
+        input: '',
+        lines: [],
+        cmdHistory: [],
+        histIdx: -1,
+
+        init() {
+            this.push('PHP / Drupal Developer &nbsp;·&nbsp; <span class="text-accent">Florin Tomozei</span>', 'text-muted', true);
+            this.push('Type <span class="text-accent">help</span> to explore, or just start typing.', 'text-muted', true);
+            this.push('─'.repeat(42), 'text-line/40', false);
+            this.$nextTick(() => this.$refs.termInput?.focus());
+        },
+
+        push(html, cls = 'text-text', raw = false) {
+            this.lines.push({ html: raw ? html : esc(html), cls });
+            this.$nextTick(() => {
+                if (this.$refs.output) this.$refs.output.scrollTop = this.$refs.output.scrollHeight;
+            });
+        },
+
+        run() {
+            const raw = this.input.trim();
+            const cmd = raw.toLowerCase();
+            this.push('<span class="text-accent/50 select-none">❯</span> ' + esc(raw), 'text-text', true);
+            if (raw) { this.cmdHistory.unshift(raw); this.histIdx = -1; }
+            this.input = '';
+            if (!raw) return;
+
+            if (cmd === 'clear') { this.lines = []; return; }
+
+            if (EASTER[cmd]) {
+                this.push(esc(EASTER[cmd]), 'text-warm/80');
+                this.push('');
+                return;
+            }
+
+            const handler = CMDS[cmd];
+            if (handler) {
+                handler().forEach(({ html, cls }) => this.lines.push({ html, cls }));
+            } else {
+                this.push(esc(`  bash: ${raw}: command not found`), 'text-red-400/70');
+            }
+            this.push('');
+            this.$nextTick(() => {
+                if (this.$refs.output) this.$refs.output.scrollTop = this.$refs.output.scrollHeight;
+            });
+        },
+
+        nav(dir) {
+            if (!this.cmdHistory.length) return;
+            this.histIdx = Math.max(-1, Math.min(this.cmdHistory.length - 1, this.histIdx + dir));
+            this.input = this.histIdx >= 0 ? this.cmdHistory[this.histIdx] : '';
+        },
+    };
+};
+
 // Hero entrance animation
 function initHero() {
     if (prefersReducedMotion()) return;
@@ -123,52 +250,6 @@ function initOrbs() {
     });
 }
 
-// Journey timeline: scrubs a progress line and reveals nodes
-function initJourney() {
-    if (prefersReducedMotion()) return;
-
-    const section = document.querySelector('[data-journey]');
-    if (!section) return;
-
-    const line = section.querySelector('[data-journey-line]');
-    const nodes = section.querySelectorAll('[data-journey-node]');
-
-    if (line) {
-        gsap.fromTo(line,
-            { scaleX: 0 },
-            {
-                scaleX: 1,
-                ease: 'none',
-                transformOrigin: 'left center',
-                scrollTrigger: {
-                    trigger: section,
-                    start: 'top 65%',
-                    end: 'center 45%',
-                    scrub: 1.2,
-                },
-            }
-        );
-    }
-
-    nodes.forEach((node, i) => {
-        gsap.fromTo(node,
-            { opacity: 0, y: 14 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                ease: 'power2.out',
-                delay: i * 0.08,
-                scrollTrigger: {
-                    trigger: node,
-                    start: 'top 85%',
-                    once: true,
-                },
-            }
-        );
-    });
-}
-
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -176,5 +257,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initReveal();
     initScrollAnimations();
     initOrbs();
-    initJourney();
 });

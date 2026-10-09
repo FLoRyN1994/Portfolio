@@ -29,9 +29,9 @@
                 </h1>
 
                 <p class="text-muted text-lg leading-relaxed max-w-lg" data-hero>
-                    Acquia-certified, full-stack, and comfortable with the harder PHP
-                    problems around a CMS. I work with agencies and their clients to
-                    ship calm, polished systems.
+                    Acquia-certified, full-stack, and at home with the harder PHP problems
+                    that come with large-scale Drupal platforms. Nine years shipping stable
+                    systems for agencies — from custom modules to enterprise integrations.
                 </p>
 
                 @php $meetingHref = config('portfolio.calendly_url') ?: '/contact'; @endphp
@@ -45,39 +45,44 @@
                 </div>
             </div>
 
-            {{-- Terminal card --}}
+            {{-- Interactive terminal --}}
             <div class="lg:col-span-5" data-hero>
-                <div class="bg-surface-2 border border-line rounded-2xl overflow-hidden shadow-xl shadow-bg/50">
+                <div x-data="terminalWidget()"
+                     class="bg-surface-2 border border-line rounded-2xl overflow-hidden shadow-xl shadow-bg/50 flex flex-col h-[340px]">
+
                     {{-- Title bar --}}
-                    <div class="flex items-center gap-1.5 px-4 py-3 border-b border-line bg-surface">
+                    <div class="flex items-center gap-1.5 px-4 py-2.5 border-b border-line bg-surface shrink-0">
                         <span class="w-2.5 h-2.5 rounded-full bg-red-500/50"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-yellow-400/50"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-green-500/50"></span>
-                        <span class="ml-2 font-mono text-xs text-muted tracking-wide">stack.sh</span>
+                        <span class="ml-2 font-mono text-xs text-muted tracking-wide">florin@portfolio ~</span>
+                        <span class="ml-auto font-mono text-[10px] text-muted/40 hidden sm:block">interactive</span>
                     </div>
 
-                    {{-- Body --}}
-                    <div class="p-5 font-mono text-sm space-y-3.5">
-                        @foreach([
-                            ['key' => 'role',     'val' => 'Full-stack developer',     'accent' => false],
-                            ['key' => 'cms',      'val' => 'Drupal · Acquia Cloud',    'accent' => true],
-                            ['key' => 'backend',  'val' => 'PHP · Symfony · Laravel',  'accent' => false],
-                            ['key' => 'frontend', 'val' => 'JS · Twig · SCSS',         'accent' => false],
-                            ['key' => 'delivery', 'val' => 'Agile · Jira · Asana',     'accent' => false],
-                        ] as $line)
-                        <div class="flex gap-3 items-baseline">
-                            <span class="text-accent/60 select-none flex-none">→</span>
-                            <div>
-                                <span class="text-muted">{{ $line['key'] }}</span>
-                                <span class="{{ $line['accent'] ? 'text-accent' : 'text-text' }} ml-2">{{ $line['val'] }}</span>
-                            </div>
-                        </div>
-                        @endforeach
+                    {{-- Output --}}
+                    <div x-ref="output"
+                         class="flex-1 overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text"
+                         style="scrollbar-width: thin; scrollbar-color: var(--color-line) transparent;"
+                         @click="$refs.termInput.focus()">
+                        <template x-for="(line, i) in lines" :key="i">
+                            <div :class="line.cls" x-html="line.html"></div>
+                        </template>
 
-                        {{-- Blinking cursor --}}
-                        <div class="flex gap-3 items-center pt-1">
-                            <span class="text-accent/60 select-none">→</span>
-                            <span class="inline-block w-2 h-[1.1em] bg-accent/70 animate-pulse"></span>
+                        {{-- Input row --}}
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span class="text-accent/50 select-none shrink-0">❯</span>
+                            <input
+                                x-ref="termInput"
+                                x-model="input"
+                                @keydown.enter="run()"
+                                @keydown.up.prevent="nav(1)"
+                                @keydown.down.prevent="nav(-1)"
+                                @keydown.ctrl.l.prevent="lines = []"
+                                type="text"
+                                autocomplete="off"
+                                spellcheck="false"
+                                class="flex-1 bg-transparent outline-none text-text caret-accent font-mono text-sm min-w-0"
+                                aria-label="Terminal input">
                         </div>
                     </div>
                 </div>
@@ -113,7 +118,7 @@
 
             {{-- 5 agencies --}}
             <div class="flex flex-col items-center text-center gap-2" data-reveal data-reveal-delay="0.16">
-                <span class="font-display text-5xl font-medium text-text leading-none">5</span>
+                <span class="font-display text-5xl font-medium text-text leading-none">4</span>
                 <span class="text-muted text-sm">agencies worked with</span>
             </div>
 
@@ -128,50 +133,29 @@
 </section>
 
 {{-- ═══════════════════════════════════════════════════════
-     AGENCY RIBBON
+     AGENCY JOURNEY
 ═══════════════════════════════════════════════════════ --}}
 @if($agencies->count())
 <section class="py-16">
     <div class="max-w-5xl mx-auto px-6 mb-10 text-center" data-reveal>
-        <x-section-label>Agencies I've worked with</x-section-label>
+        <x-section-label>My path</x-section-label>
+        <h2 class="font-display text-4xl md:text-5xl text-text mt-3 leading-tight">Agency Journey</h2>
     </div>
 
-    {{-- Marquee --}}
-    <div class="relative overflow-hidden marquee-container" role="marquee" aria-label="Agency list">
-        {{-- Fade edges --}}
-        <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" aria-hidden="true"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" aria-hidden="true"></div>
-
-        <div class="flex items-center gap-6 animate-marquee w-max">
-            {{-- First copy --}}
-            @foreach($agencies as $agency)
-            <a
-                href="{{ $agency->url }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex-none flex items-center gap-3 px-5 py-2.5 rounded-xl border border-line bg-surface text-muted hover:text-text hover:border-accent/30 hover:bg-surface-2 font-medium text-sm transition-all duration-200 whitespace-nowrap">
-                @if($agency->logo_path)
-                    <img src="{{ Storage::url($agency->logo_path) }}" alt="{{ $agency->name }} logo" class="h-5 w-auto opacity-70" loading="lazy">
-                @endif
-                {{ $agency->name }}
-            </a>
-            @endforeach
-            {{-- Duplicate for seamless loop --}}
-            @foreach($agencies as $agency)
-            <a
-                href="{{ $agency->url }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-hidden="true"
-                tabindex="-1"
-                class="flex-none flex items-center gap-3 px-5 py-2.5 rounded-xl border border-line bg-surface text-muted hover:text-text hover:border-accent/30 hover:bg-surface-2 font-medium text-sm transition-all duration-200 whitespace-nowrap">
-                @if($agency->logo_path)
-                    <img src="{{ Storage::url($agency->logo_path) }}" alt="" class="h-5 w-auto opacity-70">
-                @endif
-                {{ $agency->name }}
-            </a>
-            @endforeach
-        </div>
+    <div class="flex flex-wrap justify-center gap-4 max-w-2xl mx-auto px-6" data-reveal data-reveal-delay="0.08">
+        @foreach($agencies as $agency)
+        <a href="{{ $agency->url }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="{{ $agency->name }}"
+           class="flex items-center justify-center h-[50px] px-4 rounded-xl bg-surface border border-line hover:border-accent/30 hover:bg-surface-2 transition-all duration-200">
+            @if($agency->logo_path)
+                <img src="{{ Storage::url($agency->logo_path) }}" alt="{{ $agency->name }}" class="h-[32px] w-auto max-w-[140px] object-contain" loading="lazy">
+            @else
+                <span class="font-mono text-xs text-muted">{{ $agency->name }}</span>
+            @endif
+        </a>
+        @endforeach
     </div>
 </section>
 @endif
@@ -318,66 +302,6 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════
-     JOURNEY — Agency timeline
-═══════════════════════════════════════════════════════ --}}
-@if($journey->count())
-<section id="journey" data-section="journey" class="py-24 px-6" data-journey>
-    <div class="max-w-6xl mx-auto">
-
-        <div class="mb-14" data-reveal>
-            <x-section-label>My path</x-section-label>
-            <h2 class="font-display text-4xl md:text-5xl text-text mt-3 leading-tight">Agency journey</h2>
-        </div>
-
-        {{-- Desktop: horizontal timeline --}}
-        <div class="hidden md:block relative">
-            {{-- Progress line --}}
-            <div class="absolute top-7 left-0 right-0 h-px bg-line overflow-hidden">
-                <div class="absolute inset-0 bg-accent origin-left" data-journey-line style="transform: scaleX(0)"></div>
-            </div>
-
-            <div class="relative grid gap-6" style="grid-template-columns: repeat({{ $journey->count() }}, 1fr)">
-                @foreach($journey as $agency)
-                <div class="flex flex-col gap-3 pt-3" data-journey-node>
-                    {{-- Node dot --}}
-                    <div class="w-3.5 h-3.5 rounded-full bg-accent border-2 border-bg ring-2 ring-accent/30 mx-auto mb-4 relative z-10"></div>
-
-                    <div class="text-center space-y-1">
-                        @if($agency->period)
-                        <p class="font-mono text-xs text-accent tracking-wider">{{ $agency->period }}</p>
-                        @endif
-                        <h3 class="font-semibold text-text text-sm">{{ $agency->name }}</h3>
-                        @if($agency->description)
-                        <p class="text-muted text-xs leading-relaxed">{{ $agency->description }}</p>
-                        @endif
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-
-        {{-- Mobile: vertical stack --}}
-        <div class="md:hidden relative pl-6 border-l border-line space-y-8">
-            @foreach($journey as $agency)
-            <div class="relative" data-reveal data-reveal-delay="{{ $loop->index * 0.08 }}">
-                <div class="absolute -left-[1.6rem] top-1.5 w-3 h-3 rounded-full bg-accent border-2 border-bg ring-2 ring-accent/30"></div>
-                <div class="space-y-1">
-                    @if($agency->period)
-                    <p class="font-mono text-xs text-accent tracking-wider">{{ $agency->period }}</p>
-                    @endif
-                    <h3 class="font-semibold text-text text-sm">{{ $agency->name }}</h3>
-                    @if($agency->description)
-                    <p class="text-muted text-xs leading-relaxed">{{ $agency->description }}</p>
-                    @endif
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-    </div>
-</section>
-@endif
 
 {{-- ═══════════════════════════════════════════════════════
      NOTES — Featured post + TIL rows
