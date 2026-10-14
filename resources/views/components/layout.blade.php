@@ -16,6 +16,7 @@
     <meta name="description" content="{{ $pageDesc }}">
     <meta name="author" content="Florin Tomozei">
     <meta name="robots" content="index, follow">
+    <meta name="google-site-verification" content="aJ1B0T_iH1oiqczc3L_45wuHHVCuEq8IeZv4IXO1SKU">
     <link rel="canonical" href="{{ $pageUrl }}">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
