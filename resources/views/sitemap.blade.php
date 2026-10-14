@@ -20,12 +20,12 @@
     </url>
     @endforeach
 
-    @foreach($tilPosts as $post)
+    @if($tilPosts->count())
     <url>
         <loc>{{ url('/til') }}</loc>
-        <lastmod>{{ $post->published_at->toAtomString() }}</lastmod>
+        <lastmod>{{ $tilPosts->first()->published_at->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
-    @endforeach
+    @endif
 </urlset>
