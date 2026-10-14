@@ -20,7 +20,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->email === config('portfolio.admin_email');
     }
 
     protected function casts(): array

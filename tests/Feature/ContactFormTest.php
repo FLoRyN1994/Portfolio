@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\ContactSubmission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class ContactFormTest extends TestCase
@@ -19,25 +19,29 @@ class ContactFormTest extends TestCase
 
     public function test_valid_submission_is_stored(): void
     {
+        Http::fake(['https://www.google.com/recaptcha/*' => Http::response(['success' => true, 'score' => 0.9])]);
+
         $response = $this->post('/contact', [
-            'name'    => 'Jane Doe',
-            'email'   => 'jane@example.com',
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
             'message' => 'I have a project for you.',
         ]);
 
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('contact_submissions', [
-            'name'  => 'Jane Doe',
+            'name' => 'Jane Doe',
             'email' => 'jane@example.com',
         ]);
     }
 
     public function test_invalid_submission_is_rejected(): void
     {
+        Http::fake(['https://www.google.com/recaptcha/*' => Http::response(['success' => true, 'score' => 0.9])]);
+
         $response = $this->post('/contact', [
-            'name'    => '',
-            'email'   => 'not-an-email',
+            'name' => '',
+            'email' => 'not-an-email',
             'message' => '',
         ]);
 
@@ -48,8 +52,8 @@ class ContactFormTest extends TestCase
     public function test_honeypot_fills_silently_succeed_without_storing(): void
     {
         $response = $this->post('/contact', [
-            'name'    => 'Bot',
-            'email'   => 'bot@example.com',
+            'name' => 'Bot',
+            'email' => 'bot@example.com',
             'message' => 'Spam',
             'website' => 'http://spam.example.com',
         ]);
@@ -60,10 +64,12 @@ class ContactFormTest extends TestCase
 
     public function test_rate_limiting_blocks_excessive_requests(): void
     {
+        Http::fake(['https://www.google.com/recaptcha/*' => Http::response(['success' => true, 'score' => 0.9])]);
+
         for ($i = 0; $i < 7; $i++) {
             $response = $this->post('/contact', [
-                'name'    => "User $i",
-                'email'   => "user$i@example.com",
+                'name' => "User $i",
+                'email' => "user$i@example.com",
                 'message' => 'Test message',
             ]);
         }

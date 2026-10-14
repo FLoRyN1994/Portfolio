@@ -14,7 +14,9 @@ use Illuminate\Support\Str;
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
@@ -24,8 +26,7 @@ class PostResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, Forms\Set $set) =>
-                        $set('slug', Str::slug($state))
+                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('slug', Str::slug($state))
                     ),
                 Forms\Components\TextInput::make('slug')
                     ->required()

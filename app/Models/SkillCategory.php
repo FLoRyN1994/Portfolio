@@ -9,7 +9,7 @@ class SkillCategory extends Model
     protected $fillable = ['name', 'description', 'items', 'col_span', 'variant', 'sort_order'];
 
     protected $casts = [
-        'items'    => 'array',
+        'items' => 'array',
         'col_span' => 'integer',
     ];
 }

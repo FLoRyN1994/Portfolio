@@ -13,8 +13,11 @@ use Filament\Tables\Table;
 class AgencyResource extends Resource
 {
     protected static ?string $model = Agency::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+
     protected static ?string $navigationGroup = 'Portfolio';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
@@ -61,9 +64,9 @@ class AgencyResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListAgencies::route('/'),
+            'index' => Pages\ListAgencies::route('/'),
             'create' => Pages\CreateAgency::route('/create'),
-            'edit'   => Pages\EditAgency::route('/{record}/edit'),
+            'edit' => Pages\EditAgency::route('/{record}/edit'),
         ];
     }
 }

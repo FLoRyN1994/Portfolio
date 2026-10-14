@@ -21,7 +21,7 @@ class ContactController extends Controller
         // reCAPTCHA v3 verification
         if ($secretKey = config('portfolio.recaptcha_secret_key')) {
             $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret'   => $secretKey,
+                'secret' => $secretKey,
                 'response' => $request->input('recaptcha_token', ''),
                 'remoteip' => $request->ip(),
             ]);
@@ -33,16 +33,20 @@ class ContactController extends Controller
         }
 
         $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'message' => 'required|string|max:5000',
         ]);
 
-        $submission = ContactSubmission::create($validated);
+        try {
+            $submission = ContactSubmission::create($validated);
 
-        if ($email = config('portfolio.contact_email')) {
-            Notification::route('mail', $email)
-                ->notify(new ContactNotification($submission));
+            if ($email = config('portfolio.contact_email')) {
+                Notification::route('mail', $email)
+                    ->notify(new ContactNotification($submission));
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['message' => 'Something went wrong. Please try again.'])->withInput();
         }
 
         return back()->with('success', 'Thanks! I\'ll get back to you soon.');

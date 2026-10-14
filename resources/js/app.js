@@ -1,4 +1,6 @@
 import Alpine from 'alpinejs';
+import Collapse from '@alpinejs/collapse';
+Alpine.plugin(Collapse);
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -137,7 +139,7 @@ window.terminalWidget = function () {
             const raw = this.input.trim();
             const cmd = raw.toLowerCase();
             this.push('<span class="text-accent/50 select-none">❯</span> ' + esc(raw), 'text-text', true);
-            if (raw) { this.cmdHistory.unshift(raw); this.histIdx = -1; }
+            if (raw) { this.cmdHistory.unshift(raw); if (this.cmdHistory.length > 50) this.cmdHistory.pop(); this.histIdx = -1; }
             this.input = '';
             if (!raw) return;
 
@@ -235,26 +237,14 @@ function initScrollAnimations() {
     });
 }
 
-// Floating orb parallax
-function initOrbs() {
-    if (prefersReducedMotion()) return;
-
-    gsap.utils.toArray('[data-orb]').forEach((orb, i) => {
-        gsap.to(orb, {
-            y: i % 2 === 0 ? -40 : 40,
-            duration: 4 + i,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-        });
-    });
-}
-
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
     initHero();
     initReveal();
     initScrollAnimations();
-    initOrbs();
+
+    document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+    });
 });

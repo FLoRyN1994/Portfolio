@@ -146,6 +146,10 @@
                                 .then(function (token) {
                                     tokenInput.value = token;
                                     form.submit();
+                                })
+                                .catch(function () {
+                                    submitBtn.disabled = false;
+                                    alert('Verification failed. Please try again.');
                                 });
                         });
                     });

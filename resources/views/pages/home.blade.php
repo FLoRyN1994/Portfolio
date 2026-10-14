@@ -122,9 +122,9 @@
                 <span class="text-muted text-sm">agencies worked with</span>
             </div>
 
-            {{-- 4 platforms --}}
+            {{-- 6 platforms --}}
             <div class="flex flex-col items-center text-center gap-2" data-reveal data-reveal-delay="0.24">
-                <span class="font-display text-5xl font-medium text-text leading-none">4</span>
+                <span class="font-display text-5xl font-medium text-text leading-none">6</span>
                 <span class="text-muted text-sm">client platforms</span>
             </div>
 
@@ -136,7 +136,7 @@
      AGENCY JOURNEY
 ═══════════════════════════════════════════════════════ --}}
 @if($agencies->count())
-<section class="py-16">
+<section id="journey" class="py-16">
     <div class="max-w-5xl mx-auto px-6 mb-10 text-center" data-reveal>
         <x-section-label>My path</x-section-label>
         <h2 class="font-display text-4xl md:text-5xl text-text mt-3 leading-tight">Agency Journey</h2>
@@ -177,66 +177,209 @@
         </div>
 
         @if($platforms->count())
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach($platforms as $project)
-            <div class="relative group bg-surface border border-line rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-accent/20 hover:shadow-2xl hover:shadow-bg/50"
-                 data-reveal data-reveal-delay="{{ $loop->index * 0.08 }}">
+        @php $pCount = $platforms->count(); @endphp
+        <div
+            x-data="{
+                cur: 0,
+                n: {{ $pCount }},
+                isDragging: false,
+                didDrag: false,
+                dragStartX: 0,
+                dragDelta: 0,
+                get max() { return this.n - 1; },
+                get shift() {
+                    const c = this.$refs.track && this.$refs.track.firstElementChild;
+                    const clip = this.$refs.clip;
+                    if (!c || !clip) return 0;
+                    const cw = c.offsetWidth + 24;
+                    const maxS = Math.max(0, this.n * cw - 24 - clip.clientWidth);
+                    const base = Math.min(this.cur * cw, maxS);
+                    return Math.max(0, base - (this.isDragging ? this.dragDelta : 0));
+                },
+                paused: false,
+                _autoTimer: null,
+                prev() { this.cur = this.cur === 0 ? this.max : this.cur - 1; this.resetAuto(); },
+                next() { this.cur = this.cur >= this.max ? 0 : this.cur + 1; },
+                go(i)  { this.cur = Math.max(0, Math.min(i, this.max)); this.resetAuto(); },
+                startAuto() {
+                    clearInterval(this._autoTimer);
+                    this._autoTimer = setInterval(() => { if (!this.paused && !this.isDragging) this.next(); }, 4000);
+                },
+                stopAuto()  { clearInterval(this._autoTimer); },
+                resetAuto() { this.stopAuto(); this.startAuto(); },
+                startDrag(e) {
+                    if (e.pointerType === 'mouse' && e.button !== 0) return;
+                    this.isDragging = true; this.didDrag = false;
+                    this.dragStartX = e.clientX; this.dragDelta = 0;
+                    this.$refs.track.setPointerCapture(e.pointerId);
+                },
+                moveDrag(e) {
+                    if (!this.isDragging) return;
+                    this.dragDelta = e.clientX - this.dragStartX;
+                    if (Math.abs(this.dragDelta) > 5) this.didDrag = true;
+                },
+                endDrag(e) {
+                    if (!this.isDragging) return;
+                    const dx = this.dragDelta;
+                    this.isDragging = false; this.dragDelta = 0;
+                    this.$refs.track.releasePointerCapture(e.pointerId);
+                    if (Math.abs(dx) > 50) { dx < 0 ? this.next() : this.prev(); }
+                    this.resetAuto();
+                }
+            }"
+            x-init="$nextTick(() => {
+                let wheelTimer, acc = 0;
+                $refs.clip.addEventListener('wheel', (e) => {
+                    if (Math.abs(e.deltaX) < 5) return;
+                    e.preventDefault();
+                    acc += e.deltaX;
+                    clearTimeout(wheelTimer);
+                    wheelTimer = setTimeout(() => {
+                        if (acc > 60) { $data.next(); $data.resetAuto(); }
+                        else if (acc < -60) { $data.prev(); $data.resetAuto(); }
+                        acc = 0;
+                    }, 80);
+                }, { passive: false });
+                $data.startAuto();
+            })"
+            @mouseenter="paused = true"
+            @mouseleave="paused = false"
+            @resize.window.debounce="cur = 0"
+            @visibilitychange.window="document.hidden ? stopAuto() : startAuto()">
 
-                {{-- Browser frame --}}
-                <x-browser-frame url="{{ $project->url }}">
-                    @if($project->thumbnail)
-                    <img
-                        src="{{ $project->thumbnail }}"
-                        alt="{{ $project->title }} website"
-                        class="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-translate-y-2"
-                        loading="lazy">
-                    @else
-                    <div class="absolute inset-0 flex items-center justify-center select-none">
-                        <div class="absolute inset-0 bg-gradient-to-br from-accent/8 to-warm/5"></div>
-                        <span class="relative font-mono text-xs text-muted/50">{{ parse_url($project->url, PHP_URL_HOST) }}</span>
-                    </div>
-                    @endif
-                </x-browser-frame>
+            {{-- Overflow clip --}}
+            <div x-ref="clip" class="overflow-hidden py-4">
+                <div
+                    x-ref="track"
+                    class="flex gap-6 ease-out will-change-transform select-none"
+                    :class="isDragging ? 'transition-none cursor-grabbing' : 'transition-transform duration-500 cursor-grab'"
+                    :style="{ transform: 'translateX(-' + shift + 'px)' }"
+                    @pointerdown="startDrag($event)"
+                    @pointermove="moveDrag($event)"
+                    @pointerup="endDrag($event)"
+                    @pointercancel="endDrag($event)"
+                    @click.capture="if (didDrag) { $event.preventDefault(); didDrag = false; }">
 
-                {{-- Card body --}}
-                <div class="p-6">
-                    <div class="flex items-start justify-between gap-3 mb-3">
-                        <div>
-                            <h3 class="text-text font-semibold text-lg leading-snug">{{ $project->title }}</h3>
-                            <p class="text-muted text-sm mt-0.5">{{ $project->role }}</p>
+                    @foreach($platforms as $project)
+                    <div class="relative group bg-surface border border-line rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-accent/20 hover:shadow-2xl hover:shadow-bg/50 shrink-0 w-full md:w-[calc(50%-12px)]">
+
+                        {{-- Browser frame --}}
+                        @php
+                            $isLogo = $project->thumbnail && str_contains($project->thumbnail, '-logo.');
+                            $invertLogo = $isLogo && $project->slug === 'isf';
+                        @endphp
+                        <x-browser-frame url="{{ $project->url }}">
+                            @if($project->thumbnail && $isLogo)
+                            {{-- Logo: centered on a subtle branded background --}}
+                            <div class="absolute inset-0 flex items-center justify-center bg-surface-2">
+                                <div class="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-warm/5"></div>
+                                <img
+                                    src="{{ $project->thumbnail }}"
+                                    alt="{{ $project->title }} logo"
+                                    class="relative max-h-14 max-w-[55%] object-contain transition-transform duration-500 group-hover:scale-110 @if($invertLogo) brightness-0 invert @endif"
+                                    loading="lazy"
+                                    draggable="false">
+                            </div>
+                            @elseif($project->thumbnail)
+                            {{-- Screenshot: cover + subtle parallax on hover --}}
+                            <img
+                                src="{{ $project->thumbnail }}"
+                                alt="{{ $project->title }} website"
+                                class="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-translate-y-2"
+                                loading="lazy"
+                                draggable="false">
+                            @else
+                            <div class="absolute inset-0 flex items-center justify-center select-none">
+                                <div class="absolute inset-0 bg-gradient-to-br from-accent/8 to-warm/5"></div>
+                                <span class="relative font-mono text-xs text-muted/50">{{ parse_url($project->url, PHP_URL_HOST) }}</span>
+                            </div>
+                            @endif
+                        </x-browser-frame>
+
+                        {{-- Card body --}}
+                        <div class="p-6">
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <div>
+                                    <h3 class="text-text font-semibold text-lg leading-snug">{{ $project->title }}</h3>
+                                    <p class="text-muted text-sm mt-0.5">{{ $project->role }}</p>
+                                </div>
+                                @if($project->url)
+                                <a href="{{ $project->url }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="flex-none font-mono text-xs text-muted hover:text-accent transition-colors mt-0.5 z-10 relative"
+                                   aria-label="Visit {{ $project->title }} website">
+                                    Visit site ↗
+                                </a>
+                                @endif
+                            </div>
+
+                            @if($project->agency)
+                            <p class="font-mono text-xs text-muted mb-3">via {{ $project->agency->name }}</p>
+                            @endif
+
+                            <p class="text-muted text-sm leading-relaxed mb-4">{{ $project->summary }}</p>
+
+                            @if($project->tech_stack)
+                            <div class="flex flex-wrap gap-2">
+                                @foreach(array_slice((array) $project->tech_stack, 0, 5) as $tech)
+                                <x-chip>{{ $tech }}</x-chip>
+                                @endforeach
+                            </div>
+                            @endif
                         </div>
-                        @if($project->url)
-                        <a href="{{ $project->url }}"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="flex-none font-mono text-xs text-muted hover:text-accent transition-colors mt-0.5 z-10 relative"
-                           aria-label="Visit {{ $project->title }} website">
-                            Visit site ↗
-                        </a>
-                        @endif
+
+                        {{-- Full-card link --}}
+                        <a href="/projects/{{ $project->slug }}"
+                           class="absolute inset-0 z-0 rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+                           aria-label="View {{ $project->title }} case study"></a>
                     </div>
+                    @endforeach
+                </div>
+            </div>
 
-                    @if($project->agency)
-                    <p class="font-mono text-xs text-muted mb-3">via {{ $project->agency->name }}</p>
-                    @endif
+            {{-- Controls bar --}}
+            <div class="flex items-center justify-between mt-8">
 
-                    <p class="text-muted text-sm leading-relaxed mb-4">{{ $project->summary }}</p>
+                {{-- Prev button --}}
+                <button
+                    @click="prev()"
+                    class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface border border-line text-sm font-medium text-muted transition-all duration-200 hover:border-accent/40 hover:text-accent hover:bg-surface-2 hover:-translate-x-0.5"
+                    aria-label="Previous platform">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    <span>Prev</span>
+                </button>
 
-                    @if($project->tech_stack)
-                    <div class="flex flex-wrap gap-2">
-                        @foreach(array_slice((array) $project->tech_stack, 0, 5) as $tech)
-                        <x-chip>{{ $tech }}</x-chip>
-                        @endforeach
+                {{-- Dots + counter --}}
+                <div class="flex flex-col items-center gap-2.5">
+                    <div class="flex items-center gap-1.5">
+                        <template x-for="i in (max + 1)" :key="i">
+                            <button
+                                @click="go(i - 1)"
+                                :class="cur === (i - 1)
+                                    ? 'bg-accent w-6'
+                                    : 'bg-line/50 w-1.5 hover:bg-muted/50'"
+                                class="h-1.5 rounded-full transition-all duration-300"
+                                :aria-label="'Go to slide ' + i">
+                            </button>
+                        </template>
                     </div>
-                    @endif
+                    <span
+                        class="font-mono text-[0.65rem] text-muted/40 tabular-nums tracking-wider"
+                        x-text="(cur + 1) + ' / ' + n">
+                    </span>
                 </div>
 
-                {{-- Full-card link (behind the "Visit site" button) --}}
-                <a href="/projects/{{ $project->slug }}"
-                   class="absolute inset-0 z-0 rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
-                   aria-label="View {{ $project->title }} case study"></a>
+                {{-- Next button --}}
+                <button
+                    @click="next()"
+                    class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface border border-line text-sm font-medium text-muted transition-all duration-200 hover:border-accent/40 hover:text-accent hover:bg-surface-2 hover:translate-x-0.5"
+                    aria-label="Next platform">
+                    <span>Next</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+
             </div>
-            @endforeach
         </div>
         @endif
 

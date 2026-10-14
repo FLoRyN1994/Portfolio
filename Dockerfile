@@ -23,7 +23,8 @@ RUN composer install --optimize-autoloader --no-dev --no-interaction \
 
 EXPOSE 8080
 
-CMD php artisan config:cache \
+CMD php artisan config:clear \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
     && php artisan migrate --force \

@@ -13,9 +13,13 @@ use Filament\Tables\Table;
 class ContactSubmissionResource extends Resource
 {
     protected static ?string $model = ContactSubmission::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
+
     protected static ?string $navigationGroup = 'Portfolio';
+
     protected static ?int $navigationSort = 10;
+
     protected static ?string $label = 'Messages';
 
     public static function form(Form $form): Form
@@ -65,7 +69,7 @@ class ContactSubmissionResource extends Resource
     {
         return [
             'index' => Pages\ListContactSubmissions::route('/'),
-            'edit'  => Pages\EditContactSubmission::route('/{record}/edit'),
+            'edit' => Pages\EditContactSubmission::route('/{record}/edit'),
         ];
     }
 }

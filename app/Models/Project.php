@@ -15,8 +15,8 @@ class Project extends Model
 
     protected $casts = [
         'tech_stack' => 'array',
-        'featured'   => 'boolean',
-        'published'  => 'boolean',
+        'featured' => 'boolean',
+        'published' => 'boolean',
     ];
 
     public function agency(): BelongsTo

@@ -13,9 +13,13 @@ use Filament\Tables\Table;
 class SkillCategoryResource extends Resource
 {
     protected static ?string $model = SkillCategory::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+
     protected static ?string $navigationGroup = 'Portfolio';
+
     protected static ?int $navigationSort = 3;
+
     protected static ?string $navigationLabel = 'Skills';
 
     public static function form(Form $form): Form
@@ -26,8 +30,8 @@ class SkillCategoryResource extends Resource
                 Forms\Components\Select::make('variant')
                     ->options([
                         'default' => 'Default (blue chips)',
-                        'accent'  => 'Accent (blue border)',
-                        'warm'    => 'Warm (amber)',
+                        'accent' => 'Accent (blue border)',
+                        'warm' => 'Warm (amber)',
                     ])
                     ->default('default')
                     ->required(),
@@ -55,10 +59,10 @@ class SkillCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('sort_order')->sortable()->label('#'),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('variant')->badge()->color(fn ($state) => match($state) {
+                Tables\Columns\TextColumn::make('variant')->badge()->color(fn ($state) => match ($state) {
                     'accent' => 'info',
-                    'warm'   => 'warning',
-                    default  => 'gray',
+                    'warm' => 'warning',
+                    default => 'gray',
                 }),
                 Tables\Columns\TextColumn::make('col_span')->label('Cols'),
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
@@ -79,9 +83,9 @@ class SkillCategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListSkillCategories::route('/'),
+            'index' => Pages\ListSkillCategories::route('/'),
             'create' => Pages\CreateSkillCategory::route('/create'),
-            'edit'   => Pages\EditSkillCategory::route('/{record}/edit'),
+            'edit' => Pages\EditSkillCategory::route('/{record}/edit'),
         ];
     }
 }

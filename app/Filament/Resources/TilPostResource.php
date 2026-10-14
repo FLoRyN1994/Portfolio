@@ -14,8 +14,11 @@ use Illuminate\Support\Str;
 class TilPostResource extends Resource
 {
     protected static ?string $model = TilPost::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
+
     protected static ?string $navigationLabel = 'TIL';
+
     protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
@@ -25,8 +28,7 @@ class TilPostResource extends Resource
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, Forms\Set $set) =>
-                        $set('slug', Str::slug($state))
+                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('slug', Str::slug($state))
                     )
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('slug')

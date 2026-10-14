@@ -11,9 +11,9 @@ class Post extends Model
     ];
 
     protected $casts = [
-        'tags'         => 'array',
+        'tags' => 'array',
         'published_at' => 'datetime',
-        'featured'     => 'boolean',
+        'featured' => 'boolean',
     ];
 
     public function scopePublished($query)

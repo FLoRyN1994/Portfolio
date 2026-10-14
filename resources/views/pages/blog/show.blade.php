@@ -12,7 +12,7 @@
         <article>
             <header class="mb-10" data-animate>
                 @if($post->cover_image)
-                <img src="{{ $post->cover_image }}" alt="{{ $post->title }}" class="w-full h-56 object-cover rounded-2xl mb-8 opacity-90" loading="lazy">
+                <img src="{{ \Illuminate\Support\Facades\Storage::url($post->cover_image) }}" alt="{{ $post->title }}" class="w-full h-56 object-cover rounded-2xl mb-8 opacity-90" loading="lazy">
                 @endif
                 <h1 class="text-4xl font-semibold tracking-tight mb-4">{{ $post->title }}</h1>
                 <div class="flex items-center gap-4">
@@ -30,7 +30,7 @@
             </header>
 
             <div class="glass p-8 prose prose-invert prose-blue max-w-none" data-animate>
-                {!! $post->content !!}
+                {{ $post->content }}
             </div>
         </article>
 

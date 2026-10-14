@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     $agencies = Agency::orderBy('sort_order')->get();
+
     return view('pages.home', [
-        'agencies'      => $agencies,
-        'platforms'     => Project::published()->with('agency')->orderBy('sort_order')->get(),
-        'skills'        => SkillCategory::orderBy('sort_order')->get(),
-        'journey'       => $agencies,
+        'agencies' => $agencies,
+        'platforms' => Project::published()->with('agency')->orderBy('sort_order')->get(),
+        'skills' => SkillCategory::orderBy('sort_order')->get(),
+        'journey' => $agencies,
         'featured_post' => Post::published()->where('featured', true)->latest('published_at')->first(),
-        'til_posts'     => TilPost::published()->latest('published_at')->take(3)->get(),
+        'til_posts' => TilPost::published()->latest('published_at')->take(3)->get(),
     ]);
 });
 
@@ -35,6 +36,7 @@ Route::get('/projects/{slug}', function ($slug) {
         ->where('published', true)
         ->with('agency')
         ->firstOrFail();
+
     return view('pages.projects.show', compact('project'));
 });
 
@@ -46,6 +48,7 @@ Route::get('/blog', function () {
 
 Route::get('/blog/{slug}', function ($slug) {
     $post = Post::where('slug', $slug)->whereNotNull('published_at')->firstOrFail();
+
     return view('pages.blog.show', compact('post'));
 });
 
@@ -62,7 +65,7 @@ Route::get('/contact', function () {
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:6,1');
 
 Route::get('/sitemap.xml', function () {
-    $posts    = Post::published()->latest('published_at')->get();
+    $posts = Post::published()->latest('published_at')->get();
     $tilPosts = TilPost::published()->latest('published_at')->get();
     $projects = Project::published()->orderBy('sort_order')->get();
 
