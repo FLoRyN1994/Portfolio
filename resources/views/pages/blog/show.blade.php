@@ -67,29 +67,13 @@
             </div>
 
             {{-- Body --}}
-            <div class="blog-content" data-reveal>
+            <div class="blog-content prose prose-lg max-w-none" data-reveal>
                 {!! $post->content !!}
             </div>
 
             {{-- Footer --}}
             <footer class="mt-20">
                 <div class="h-px bg-gradient-to-r from-transparent via-line to-transparent mb-10"></div>
-
-                {{-- Author card --}}
-                <div class="flex items-center gap-5 p-6 rounded-2xl bg-surface border border-line mb-10">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-warm/20 border border-line flex items-center justify-center shrink-0">
-                        <span class="font-display text-lg text-text font-medium">F</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-text font-semibold text-sm">Florin Tomozei</p>
-                        <p class="text-muted text-xs mt-0.5">Drupal &amp; PHP Developer · Acquia Certified · Romania</p>
-                    </div>
-                    <a href="/contact"
-                       class="shrink-0 font-mono text-xs px-4 py-2 rounded-full border border-line text-muted hover:border-accent/40 hover:text-accent transition-all duration-200">
-                        Get in touch
-                    </a>
-                </div>
-
                 <div class="flex items-center justify-between gap-4 flex-wrap">
                     <a href="/blog" class="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors group">
                         <svg class="w-3.5 h-3.5 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>

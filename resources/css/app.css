@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -110,138 +111,78 @@
 
     /* ─── Blog post body ─────────────────────────────────── */
     .blog-content {
-        color: var(--color-muted);
+        --tw-prose-body:         var(--color-muted);
+        --tw-prose-headings:     var(--color-text);
+        --tw-prose-lead:         var(--color-muted);
+        --tw-prose-links:        var(--color-accent);
+        --tw-prose-bold:         var(--color-text);
+        --tw-prose-counters:     var(--color-accent);
+        --tw-prose-bullets:      var(--color-accent);
+        --tw-prose-hr:           var(--color-line);
+        --tw-prose-quotes:       var(--color-text);
+        --tw-prose-quote-borders: var(--color-accent);
+        --tw-prose-captions:     var(--color-muted);
+        --tw-prose-code:         var(--color-accent);
+        --tw-prose-pre-code:     var(--color-text);
+        --tw-prose-pre-bg:       var(--color-surface);
+        --tw-prose-th-borders:   var(--color-line);
+        --tw-prose-td-borders:   var(--color-line);
         font-size: 1.0625rem;
         line-height: 1.85;
     }
 
-    .blog-content > * + * { margin-top: 1.6em; }
-
-    /* Headings */
-    .blog-content h2 {
+    /* Headings: display font + bottom rule on h2 */
+    .blog-content h2,
+    .blog-content h3,
+    .blog-content h4 {
         font-family: var(--font-display);
-        font-size: 1.65rem;
-        line-height: 1.25;
-        color: var(--color-text);
-        margin-top: 3rem;
-        margin-bottom: 0.75rem;
+    }
+    .blog-content h2 {
         padding-bottom: 0.6rem;
         border-bottom: 1px solid var(--color-line);
     }
 
-    .blog-content h3 {
-        font-family: var(--font-display);
-        font-size: 1.2rem;
-        line-height: 1.35;
-        color: var(--color-text);
-        margin-top: 2.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .blog-content h4 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--color-text);
-        margin-top: 1.75rem;
-        margin-bottom: 0.4rem;
-    }
-
-    /* Paragraph */
-    .blog-content p { margin-top: 1.4em; margin-bottom: 1.4em; }
-
-    /* Links */
-    .blog-content a {
-        color: var(--color-accent);
-        text-decoration: underline;
-        text-decoration-color: rgba(79, 140, 255, 0.35);
-        text-underline-offset: 3px;
-        transition: text-decoration-color 0.15s;
-    }
-    .blog-content a:hover { text-decoration-color: var(--color-accent); }
-
-    /* Strong / em */
-    .blog-content strong { color: var(--color-text); font-weight: 600; }
-    .blog-content em     { color: var(--color-warm); font-style: italic; }
-
-    /* Blockquote */
+    /* Blockquote: card style */
     .blog-content blockquote {
-        margin: 2.5rem 0;
-        padding: 1.25rem 1.5rem;
         background: rgba(79, 140, 255, 0.04);
         border-left: 3px solid var(--color-accent);
         border-radius: 0 0.75rem 0.75rem 0;
-        font-size: 1.05rem;
-        font-style: italic;
-        color: var(--color-text);
+        padding: 1.1rem 1.4rem;
+        font-style: normal;
     }
-    .blog-content blockquote p { margin: 0; color: inherit; }
 
     /* Inline code */
     .blog-content :not(pre) > code {
-        font-family: var(--font-mono);
-        font-size: 0.85em;
-        color: var(--color-accent);
         background: rgba(79, 140, 255, 0.08);
         border: 1px solid rgba(79, 140, 255, 0.15);
-        padding: 0.15em 0.45em;
         border-radius: 5px;
+        font-family: var(--font-mono);
     }
+    .blog-content :not(pre) > code::before,
+    .blog-content :not(pre) > code::after { content: none; }
 
     /* Code block */
     .blog-content pre {
-        margin: 2rem 0;
-        padding: 1.25rem 1.5rem;
-        background: var(--color-surface);
         border: 1px solid var(--color-line);
         border-radius: 1rem;
-        overflow-x: auto;
         font-family: var(--font-mono);
-        font-size: 0.875rem;
         line-height: 1.7;
     }
-    .blog-content pre code {
-        background: none;
-        border: none;
-        padding: 0;
-        font-size: inherit;
-        color: var(--color-text);
-    }
 
-    /* Lists */
-    .blog-content ul,
-    .blog-content ol {
-        padding-left: 1.5rem;
-        margin: 1.4em 0;
-    }
-    .blog-content ul { list-style-type: none; }
-    .blog-content ul li { position: relative; padding-left: 0.5rem; margin: 0.55em 0; }
-    .blog-content ul li::before {
-        content: '–';
-        position: absolute;
-        left: -1rem;
-        color: var(--color-accent);
-        font-weight: 600;
-    }
-    .blog-content ol { list-style-type: decimal; }
-    .blog-content ol li { margin: 0.55em 0; padding-left: 0.25rem; }
-    .blog-content ol li::marker { color: var(--color-accent); font-weight: 600; }
-
-    /* HR */
+    /* HR: centred fade */
     .blog-content hr {
         border: none;
-        margin: 3rem auto;
-        width: 40%;
         height: 1px;
         background: linear-gradient(90deg, transparent, var(--color-line), transparent);
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
     }
 
     /* Images */
     .blog-content img {
         border-radius: 1rem;
         border: 1px solid var(--color-line);
-        width: 100%;
-        height: auto;
-        margin: 2rem 0;
     }
 
     /* Reading progress bar */
