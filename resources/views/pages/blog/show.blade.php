@@ -67,7 +67,7 @@
             </div>
 
             {{-- Body --}}
-            <div class="blog-content prose prose-lg max-w-none" data-reveal>
+            <div class="blog-content" data-reveal>
                 {!! $post->content !!}
             </div>
 

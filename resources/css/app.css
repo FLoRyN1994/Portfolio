@@ -111,25 +111,12 @@
 
     /* ─── Blog post body ─────────────────────────────────── */
     .blog-content {
-        --tw-prose-body:         var(--color-text);
-        --tw-prose-headings:     var(--color-text);
-        --tw-prose-lead:         var(--color-muted);
-        --tw-prose-links:        var(--color-accent);
-        --tw-prose-bold:         var(--color-text);
-        --tw-prose-counters:     var(--color-accent);
-        --tw-prose-bullets:      var(--color-accent);
-        --tw-prose-hr:           var(--color-line);
-        --tw-prose-quotes:       var(--color-text);
-        --tw-prose-quote-borders: var(--color-accent);
-        --tw-prose-captions:     var(--color-muted);
-        --tw-prose-code:         var(--color-accent);
-        --tw-prose-pre-code:     var(--color-text);
-        --tw-prose-pre-bg:       var(--color-surface);
-        --tw-prose-th-borders:   var(--color-line);
-        --tw-prose-td-borders:   var(--color-line);
+        color: var(--color-text);
         font-size: 1.0625rem;
         line-height: 1.85;
     }
+
+    .blog-content > * + * { margin-top: 1.5em; }
 
     /* Headings: display font + bottom rule on h2 */
     .blog-content h2,
