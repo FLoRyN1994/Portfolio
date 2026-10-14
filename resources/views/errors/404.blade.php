@@ -2,43 +2,38 @@
 <x-slot:title>Page Not Found — Florin Tomozei</x-slot:title>
 <x-slot:description>This page does not exist.</x-slot:description>
 
-<main class="min-h-[70vh] flex items-center justify-center px-6 pb-32 pt-20">
-    <div class="max-w-xl mx-auto text-center">
+<main class="min-h-[80vh] flex items-center justify-center px-6">
+    <div class="max-w-lg mx-auto text-center">
 
-        {{-- 404 number --}}
-        <div class="relative inline-block mb-8">
-            <span class="font-display text-[10rem] md:text-[12rem] font-bold leading-none text-transparent bg-clip-text"
-                  style="background-image: linear-gradient(135deg, var(--color-accent) 0%, var(--color-warm) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        {{-- 404 --}}
+        <div class="relative inline-block mb-6">
+            <span class="font-display font-bold leading-none select-none"
+                  style="font-size: clamp(7rem, 20vw, 13rem); background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-warm) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
                 404
             </span>
-            <div class="absolute inset-0 blur-3xl opacity-20"
-                 style="background: linear-gradient(135deg, var(--color-accent), var(--color-warm)); border-radius: 9999px;"></div>
+            <div class="absolute inset-0 -z-10 blur-[80px] opacity-25 rounded-full"
+                 style="background: linear-gradient(135deg, var(--color-accent), var(--color-warm));"></div>
         </div>
 
-        <h1 class="font-display text-3xl md:text-4xl text-text mb-4 tracking-tight">Page not found</h1>
-        <p class="text-muted text-lg mb-10 leading-relaxed">
-            The page you're looking for doesn't exist or has been moved.
+        <p class="font-mono text-xs text-accent tracking-widest uppercase mb-5">Page not found</p>
+
+        <h1 class="font-display text-3xl md:text-4xl text-text tracking-tight mb-5 leading-tight">
+            This page doesn't exist.
+        </h1>
+
+        <p class="text-muted text-lg leading-relaxed mb-12 max-w-sm mx-auto">
+            It may have been moved, deleted, or you may have mistyped the URL.
         </p>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="/"
-               class="px-6 py-3 rounded-full bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors">
+               class="px-7 py-3 rounded-full bg-accent text-white font-semibold text-sm hover:bg-accent/90 transition-colors duration-200">
                 Back to home
             </a>
             <a href="/contact"
-               class="px-6 py-3 rounded-full border border-line text-muted font-medium text-sm hover:text-text hover:border-accent/40 transition-colors">
+               class="px-7 py-3 rounded-full border border-line text-muted font-medium text-sm hover:text-text hover:border-accent/40 transition-colors duration-200">
                 Contact me
             </a>
-        </div>
-
-        {{-- Decorative grid --}}
-        <div class="mt-16 grid grid-cols-3 gap-3 max-w-xs mx-auto opacity-30">
-            @foreach(['/','about','/projects','/blog','/til','/contact'] as $link)
-            <a href="{{ $link }}"
-               class="px-3 py-2 rounded-lg border border-line text-xs text-muted hover:text-accent hover:border-accent/30 transition-colors font-mono">
-                {{ trim($link, '/') ?: 'home' }}
-            </a>
-            @endforeach
         </div>
 
     </div>
