@@ -6,6 +6,7 @@
     <url><loc>{{ url('/blog') }}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>{{ url('/til') }}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>{{ url('/contact') }}</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+    <url><loc>{{ url('/privacy') }}</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 
     @foreach($projects as $project)
     <url><loc>{{ url('/projects/' . $project->slug) }}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>

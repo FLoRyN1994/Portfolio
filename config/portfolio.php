@@ -9,4 +9,5 @@ return [
     'recaptcha_secret_key' => env('RECAPTCHA_SECRET_KEY', ''),
     'google_analytics_id' => env('GOOGLE_ANALYTICS_ID', ''),
     'fb_app_id' => env('FB_APP_ID', ''),
+    'cookiebot_id' => env('COOKIEBOT_ID', ''),
 ];

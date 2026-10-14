@@ -12,6 +12,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @if(config('portfolio.cookiebot_id'))
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ config('portfolio.cookiebot_id') }}" data-blockingmode="auto" type="text/javascript"></script>
+    @endif
     <title>{{ $pageTitle }}</title>
     <meta name="description" content="{{ $pageDesc }}">
     <meta name="author" content="Florin Tomozei">
@@ -203,6 +206,7 @@
                 <a href="/blog"    class="hover:text-text transition-colors">Blog</a>
                 <a href="/til"     class="hover:text-text transition-colors">TIL</a>
                 <a href="/contact" class="hover:text-text transition-colors">Contact</a>
+                <a href="/privacy" class="hover:text-text transition-colors text-muted/50 text-xs">Privacy Policy</a>
             </nav>
         </div>
     </footer>

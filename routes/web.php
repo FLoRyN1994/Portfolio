@@ -64,6 +64,14 @@ Route::get('/contact', function () {
 
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:6,1');
 
+Route::get('/privacy', function () {
+    return view('pages.privacy');
+});
+
+Route::get('/data-deletion', function () {
+    return view('pages.data-deletion');
+});
+
 Route::get('/sitemap.xml', function () {
     $posts = Post::published()->latest('published_at')->get();
     $tilPosts = TilPost::published()->latest('published_at')->get();
