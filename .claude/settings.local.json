@@ -17,7 +17,13 @@
       "Bash(php artisan:*)",
       "Bash(alias php=/Applications/MAMP/bin/php/php8.3.0/bin/php)",
       "Bash(/Applications/MAMP/bin/php/php8.3.0/bin/php artisan:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "WebFetch(domain:docs.railway.com)",
+      "Bash(brew install:*)",
+      "Bash(railway:*)",
+      "Bash(for var:*)",
+      "Bash(do railway:*)",
+      "Bash(done)"
     ]
   }
 }
