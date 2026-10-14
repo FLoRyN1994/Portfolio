@@ -2,7 +2,7 @@
 <x-slot:title>Page Not Found — Florin Tomozei</x-slot:title>
 <x-slot:description>This page does not exist.</x-slot:description>
 
-<main class="min-h-[80vh] flex items-center justify-center px-6">
+<main class="flex-1 flex items-center justify-center px-6 py-20">
     <div class="max-w-md mx-auto text-center">
 
         {{-- 404 number --}}

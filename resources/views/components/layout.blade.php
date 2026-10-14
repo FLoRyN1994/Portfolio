@@ -87,7 +87,7 @@
     <link rel="stylesheet" href="https://fonts.bunny.net/css?family=fraunces:ital,wght@1,400;1,500&display=swap">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen" x-data>
+<body class="min-h-screen flex flex-col" x-data>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">
         Skip to main content
     </a>
@@ -193,12 +193,12 @@
     </nav>
 
     {{-- Page content (offset for fixed nav) --}}
-    <div id="main-content" class="pt-16">
+    <div id="main-content" class="pt-16 flex-1 flex flex-col">
         {{ $slot }}
     </div>
 
     {{-- Footer --}}
-    <footer class="border-t border-line mt-24 py-12 px-6">
+    <footer class="border-t border-line py-12 px-6">
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-muted">
             <p class="font-mono text-xs tracking-wide">© {{ date('Y') }} Florin Tomozei</p>
             <nav class="flex items-center gap-6" aria-label="Footer navigation">
