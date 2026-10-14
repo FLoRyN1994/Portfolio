@@ -22,6 +22,9 @@
     <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
 
     <!-- Open Graph -->
+    @if(config('portfolio.fb_app_id'))
+    <meta property="fb:app_id" content="{{ config('portfolio.fb_app_id') }}">
+    @endif
     <meta property="og:site_name" content="Florin Tomozei">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="{{ $ogType }}">
