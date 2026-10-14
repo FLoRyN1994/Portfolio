@@ -1,6 +1,44 @@
 <x-layout>
 <x-slot:title>{{ $post->title }} — Florin Tomozei</x-slot:title>
 <x-slot:description>{{ $post->excerpt ?? 'An article by Florin Tomozei on Drupal, PHP, and web development.' }}</x-slot:description>
+<x-slot:ogType>article</x-slot:ogType>
+
+<x-slot:articleMeta>
+    @if($post->published_at)<meta property="article:published_time" content="{{ $post->published_at->toIso8601String() }}">@endif
+    <meta property="article:modified_time" content="{{ $post->updated_at->toIso8601String() }}">
+    <meta property="article:author" content="Florin Tomozei">
+    @if($post->tags)@foreach($post->tags as $tag)<meta property="article:tag" content="{{ $tag }}">@endforeach@endif
+</x-slot:articleMeta>
+
+<x-slot:schema>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ addslashes($post->title) }}",
+    "description": "{{ addslashes($post->excerpt ?? '') }}",
+    "url": "{{ url('/blog/' . $post->slug) }}",
+    "datePublished": "{{ $post->published_at?->toIso8601String() }}",
+    "dateModified": "{{ $post->updated_at->toIso8601String() }}",
+    "author": {
+        "@type": "Person",
+        "@id": "{{ url('/') }}/#person",
+        "name": "Florin Tomozei",
+        "url": "{{ url('/') }}"
+    },
+    "publisher": {
+        "@type": "Person",
+        "name": "Florin Tomozei",
+        "url": "{{ url('/') }}"
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ url('/blog/' . $post->slug) }}"
+    },
+    "keywords": "{{ implode(', ', (array) ($post->tags ?? [])) }}"
+}
+</script>
+</x-slot:schema>
 
 {{-- Reading progress bar --}}
 <div id="read-progress" aria-hidden="true"></div>

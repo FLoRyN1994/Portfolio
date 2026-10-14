@@ -1,40 +1,70 @@
+@php
+    $siteTitle = 'Florin Tomozei — Drupal Developer';
+    $siteDesc  = 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them. Acquia-certified, full-stack, based in Romania.';
+    $pageTitle = $title ?? $siteTitle;
+    $pageDesc  = $description ?? $siteDesc;
+    $pageUrl   = url()->current();
+    $ogType    = $ogType ?? 'website';
+    $ogImage   = $ogImage ?? asset('og-image.png');
+@endphp
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Florin Tomozei — Drupal Developer' }}</title>
-    <meta name="description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDesc }}">
+    <meta name="author" content="Florin Tomozei">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ $pageUrl }}">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="{{ $title ?? 'Florin Tomozei — Drupal Developer' }}">
-    <meta property="og:description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
-    <meta property="og:image" content="{{ asset('badge.png') }}">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="Florin Tomozei">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="{{ $ogType }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDesc }}">
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ $pageTitle }}">
+    <meta property="og:url" content="{{ $pageUrl }}">
+    {{ $articleMeta ?? '' }}
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $title ?? 'Florin Tomozei — Drupal Developer' }}">
-    <meta name="twitter:description" content="{{ $description ?? 'Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.' }}">
-    <meta name="twitter:image" content="{{ asset('badge.png') }}">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageDesc }}">
+    <meta name="twitter:image" content="{{ $ogImage }}">
 
-    <!-- JSON-LD Person -->
+    <!-- JSON-LD WebSite + Person -->
     <script type="application/ld+json">
     {
-        "@@context": "https://schema.org",
-        "@@type": "Person",
-        "name": "Florin Tomozei",
-        "url": "{{ url('/') }}",
-        "jobTitle": "Drupal Developer",
-        "description": "Drupal developer for ambitious digital platforms, with the PHP range to solve the harder problems around them.",
-        "sameAs": [
-            "{{ config('portfolio.linkedin_url') }}",
-            "{{ config('portfolio.calendly_url') }}"
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "{{ url('/') }}/#website",
+                "url": "{{ url('/') }}",
+                "name": "Florin Tomozei",
+                "description": "{{ $siteDesc }}"
+            },
+            {
+                "@type": "Person",
+                "@id": "{{ url('/') }}/#person",
+                "name": "Florin Tomozei",
+                "url": "{{ url('/') }}",
+                "jobTitle": "Drupal Developer",
+                "description": "{{ $siteDesc }}",
+                "knowsAbout": ["Drupal", "PHP", "Symfony", "Laravel", "REST API", "Docker"],
+                "sameAs": ["{{ config('portfolio.linkedin_url') }}"]
+            }
         ]
     }
     </script>
+    {{ $schema ?? '' }}
     @if(config('portfolio.google_analytics_id'))
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('portfolio.google_analytics_id') }}"></script>
     <script>
