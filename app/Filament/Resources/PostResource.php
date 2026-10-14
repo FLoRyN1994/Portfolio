@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
+use Awcodes\TiptapEditor\TiptapEditor;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -32,9 +33,10 @@ class PostResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true),
                 Forms\Components\Textarea::make('excerpt')->rows(3)->columnSpanFull(),
-                Forms\Components\MarkdownEditor::make('content')
+                TiptapEditor::make('content')
                     ->required()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->output(\Awcodes\TiptapEditor\Enums\TiptapOutput::Html),
             ])->columns(2),
 
             Forms\Components\Section::make('Meta')->schema([
