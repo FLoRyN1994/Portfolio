@@ -2,17 +2,25 @@
 <x-slot:title>{{ $post->title }} — Florin Tomozei</x-slot:title>
 <x-slot:description>{{ $post->excerpt ?? 'An article by Florin Tomozei on Drupal, PHP, and web development.' }}</x-slot:description>
 
-<main class="pb-32 pt-20 px-6">
-    <div class="max-w-3xl mx-auto">
+{{-- Reading progress bar --}}
+<div id="read-progress" aria-hidden="true"></div>
 
-        <a href="/blog" class="inline-flex items-center gap-2 font-mono text-xs text-muted hover:text-accent transition-colors mb-12" data-reveal>
-            ← All posts
+<main class="pb-32 pt-20 px-6">
+    <div class="max-w-2xl mx-auto">
+
+        {{-- Back --}}
+        <a href="/blog" class="inline-flex items-center gap-2 font-mono text-xs text-muted hover:text-accent transition-colors mb-14 group" data-reveal>
+            <svg class="w-3 h-3 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            All posts
         </a>
 
-        <article>
-            <header class="mb-12" data-reveal>
+        <article id="article">
+
+            {{-- Header --}}
+            <header class="mb-14" data-reveal>
+
                 @if($post->cover_image)
-                <div class="aspect-video overflow-hidden rounded-2xl mb-10 border border-line">
+                <div class="aspect-video overflow-hidden rounded-2xl mb-12 border border-line">
                     <img src="{{ \Illuminate\Support\Facades\Storage::url($post->cover_image) }}"
                          alt="{{ $post->title }}"
                          class="w-full h-full object-cover"
@@ -20,53 +28,97 @@
                 </div>
                 @endif
 
-                <div class="flex flex-wrap items-center gap-3 mb-5">
+                {{-- Tags + date + reading time --}}
+                @php
+                    $wordCount = str_word_count(strip_tags($post->content ?? ''));
+                    $readingTime = max(1, (int) ceil($wordCount / 230));
+                @endphp
+                <div class="flex flex-wrap items-center gap-2.5 mb-7">
                     @if($post->tags)
                     @foreach($post->tags as $tag)
-                    <span class="font-mono text-xs px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent">{{ $tag }}</span>
+                    <span class="font-mono text-[0.7rem] px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent tracking-wide">{{ $tag }}</span>
                     @endforeach
                     @endif
+                    <span class="w-px h-3.5 bg-line self-center mx-1"></span>
                     @if($post->published_at)
-                    <span class="font-mono text-xs text-muted">{{ $post->published_at->format('F j, Y') }}</span>
+                    <span class="font-mono text-xs text-muted/60">{{ $post->published_at->format('M j, Y') }}</span>
                     @endif
+                    <span class="font-mono text-xs text-muted/40">· {{ $readingTime }} min read</span>
                 </div>
 
-                <h1 class="font-display text-4xl md:text-5xl text-text leading-tight mb-5">{{ $post->title }}</h1>
+                {{-- Title --}}
+                <h1 class="font-display text-[2.4rem] md:text-5xl text-text leading-[1.1] tracking-tight mb-7">{{ $post->title }}</h1>
 
+                {{-- Excerpt --}}
                 @if($post->excerpt)
-                <p class="text-muted text-lg leading-relaxed border-l-2 border-accent/40 pl-5">{{ $post->excerpt }}</p>
+                <div class="flex gap-4">
+                    <div class="w-0.5 shrink-0 rounded-full bg-gradient-to-b from-accent to-accent/0 mt-1"></div>
+                    <p class="text-muted text-lg leading-relaxed">{{ $post->excerpt }}</p>
+                </div>
                 @endif
+
             </header>
 
-            <div class="prose prose-lg max-w-none
-                        prose-headings:font-display prose-headings:text-text
-                        prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4
-                        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                        prose-p:text-muted prose-p:leading-relaxed prose-p:my-4
-                        prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-                        prose-strong:text-text
-                        prose-em:text-warm
-                        prose-blockquote:border-l-2 prose-blockquote:border-accent/40 prose-blockquote:text-muted prose-blockquote:not-italic prose-blockquote:pl-5
-                        prose-code:text-accent prose-code:before:content-none prose-code:after:content-none prose-code:bg-surface-2 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono prose-code:text-sm
-                        prose-pre:bg-surface prose-pre:border prose-pre:border-line prose-pre:rounded-2xl prose-pre:my-6
-                        prose-ul:text-muted prose-ol:text-muted
-                        prose-li:my-1
-                        prose-hr:border-line prose-hr:my-10
-                        prose-img:rounded-2xl prose-img:border prose-img:border-line" data-reveal>
+            {{-- Divider --}}
+            <div class="flex items-center gap-4 mb-14" data-reveal>
+                <div class="h-px flex-1 bg-line"></div>
+                <span class="font-mono text-[0.6rem] text-muted/30 tracking-[0.3em] uppercase">Article</span>
+                <div class="h-px flex-1 bg-line"></div>
+            </div>
+
+            {{-- Body --}}
+            <div class="blog-content" data-reveal>
                 {!! $post->content !!}
             </div>
 
-            <footer class="mt-16 pt-8 border-t border-line flex items-center justify-between gap-4 flex-wrap">
-                <a href="/blog" class="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
-                    ← Back to blog
-                </a>
-                <a href="/contact" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-surface border border-line text-sm text-muted hover:border-accent/30 hover:text-accent transition-all duration-200">
-                    Get in touch →
-                </a>
-            </footer>
-        </article>
+            {{-- Footer --}}
+            <footer class="mt-20">
+                <div class="h-px bg-gradient-to-r from-transparent via-line to-transparent mb-10"></div>
 
+                {{-- Author card --}}
+                <div class="flex items-center gap-5 p-6 rounded-2xl bg-surface border border-line mb-10">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-warm/20 border border-line flex items-center justify-center shrink-0">
+                        <span class="font-display text-lg text-text font-medium">F</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-text font-semibold text-sm">Florin Tomozei</p>
+                        <p class="text-muted text-xs mt-0.5">Drupal &amp; PHP Developer · Acquia Certified · Romania</p>
+                    </div>
+                    <a href="/contact"
+                       class="shrink-0 font-mono text-xs px-4 py-2 rounded-full border border-line text-muted hover:border-accent/40 hover:text-accent transition-all duration-200">
+                        Get in touch
+                    </a>
+                </div>
+
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <a href="/blog" class="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors group">
+                        <svg class="w-3.5 h-3.5 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                        Back to blog
+                    </a>
+                    <a href="/til" class="font-mono text-xs text-muted/50 hover:text-accent transition-colors">
+                        Short notes →
+                    </a>
+                </div>
+            </footer>
+
+        </article>
     </div>
 </main>
+
+<script>
+    (function () {
+        const bar = document.getElementById('read-progress');
+        const article = document.getElementById('article');
+        if (!bar || !article) return;
+        function update() {
+            const rect = article.getBoundingClientRect();
+            const total = article.offsetHeight - window.innerHeight;
+            const scrolled = Math.max(0, -rect.top);
+            bar.style.width = Math.min(100, total > 0 ? (scrolled / total) * 100 : 0) + '%';
+        }
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+    })();
+</script>
 
 </x-layout>
