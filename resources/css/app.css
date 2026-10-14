@@ -111,7 +111,7 @@
 
     /* ─── Blog post body ─────────────────────────────────── */
     .blog-content {
-        --tw-prose-body:         var(--color-muted);
+        --tw-prose-body:         var(--color-text);
         --tw-prose-headings:     var(--color-text);
         --tw-prose-lead:         var(--color-muted);
         --tw-prose-links:        var(--color-accent);
