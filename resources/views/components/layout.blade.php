@@ -43,18 +43,18 @@
     <!-- JSON-LD WebSite + Person -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@graph": [
+        "@@context": "https://schema.org",
+        "@@graph": [
             {
-                "@type": "WebSite",
-                "@id": "{{ url('/') }}/#website",
+                "@@type": "WebSite",
+                "@@id": "{{ url('/') }}/#website",
                 "url": "{{ url('/') }}",
                 "name": "Florin Tomozei",
                 "description": "{{ $siteDesc }}"
             },
             {
-                "@type": "Person",
-                "@id": "{{ url('/') }}/#person",
+                "@@type": "Person",
+                "@@id": "{{ url('/') }}/#person",
                 "name": "Florin Tomozei",
                 "url": "{{ url('/') }}",
                 "jobTitle": "Drupal Developer",

@@ -13,27 +13,27 @@
 <x-slot:schema>
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    "@@context": "https://schema.org",
+    "@@type": "BlogPosting",
     "headline": "{{ addslashes($post->title) }}",
     "description": "{{ addslashes($post->excerpt ?? '') }}",
     "url": "{{ url('/blog/' . $post->slug) }}",
     "datePublished": "{{ $post->published_at?->toIso8601String() }}",
     "dateModified": "{{ $post->updated_at->toIso8601String() }}",
     "author": {
-        "@type": "Person",
-        "@id": "{{ url('/') }}/#person",
+        "@@type": "Person",
+        "@@id": "{{ url('/') }}/#person",
         "name": "Florin Tomozei",
         "url": "{{ url('/') }}"
     },
     "publisher": {
-        "@type": "Person",
+        "@@type": "Person",
         "name": "Florin Tomozei",
         "url": "{{ url('/') }}"
     },
     "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": "{{ url('/blog/' . $post->slug) }}"
+        "@@type": "WebPage",
+        "@@id": "{{ url('/blog/' . $post->slug) }}"
     },
     "keywords": "{{ implode(', ', (array) ($post->tags ?? [])) }}"
 }
