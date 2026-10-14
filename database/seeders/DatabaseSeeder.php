@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             AgencySeeder::class,
             ProjectPlatformSeeder::class,
             SkillCategorySeeder::class,
+            TilPostSeeder::class,
         ]);
 
         User::firstOrCreate(
