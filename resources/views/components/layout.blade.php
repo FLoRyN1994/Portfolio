@@ -12,6 +12,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @if(config('portfolio.cookiebot_id'))
     <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ config('portfolio.cookiebot_id') }}" data-blockingmode="auto" type="text/javascript"></script>
     @endif

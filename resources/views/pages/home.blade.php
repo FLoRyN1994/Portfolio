@@ -45,9 +45,9 @@
                 </div>
             </div>
 
-            {{-- Interactive terminal --}}
+            {{-- AI chat widget --}}
             <div class="lg:col-span-5" data-hero>
-                <div x-data="terminalWidget()"
+                <div x-data="chatWidget()"
                      class="bg-surface-2 border border-line rounded-2xl overflow-hidden shadow-xl shadow-bg/50 flex flex-col h-[340px]">
 
                     {{-- Title bar --}}
@@ -55,35 +55,73 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-red-500/50"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-yellow-400/50"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-green-500/50"></span>
-                        <span class="ml-2 font-mono text-xs text-muted tracking-wide">florin@portfolio ~</span>
-                        <span class="ml-auto font-mono text-[10px] text-muted/40 hidden sm:block">interactive</span>
+                        <span class="ml-2 font-mono text-xs text-muted tracking-wide">ask me anything</span>
+                        <span class="ml-auto flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400/80 animate-pulse"></span>
+                            <span class="font-mono text-[10px] text-muted/40 hidden sm:block">AI online</span>
+                        </span>
                     </div>
 
-                    {{-- Output --}}
-                    <div x-ref="output"
-                         class="flex-1 overflow-y-auto p-4 font-mono text-sm leading-relaxed cursor-text"
-                         style="scrollbar-width: thin; scrollbar-color: var(--color-line) transparent;"
-                         @click="$refs.termInput.focus()">
-                        <template x-for="(line, i) in lines" :key="i">
-                            <div :class="line.cls" x-html="line.html"></div>
-                        </template>
+                    {{-- Chat body --}}
+                    <div x-ref="chatBody"
+                         class="flex-1 overflow-y-auto px-4 py-3"
+                         style="scrollbar-width: thin; scrollbar-color: var(--color-line) transparent;">
 
-                        {{-- Input row --}}
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="text-accent/50 select-none shrink-0">❯</span>
-                            <input
-                                x-ref="termInput"
-                                x-model="input"
-                                @keydown.enter="run()"
-                                @keydown.up.prevent="nav(1)"
-                                @keydown.down.prevent="nav(-1)"
-                                @keydown.ctrl.l.prevent="lines = []"
-                                type="text"
-                                autocomplete="off"
-                                spellcheck="false"
-                                class="flex-1 bg-transparent outline-none text-text caret-accent font-mono text-sm min-w-0"
-                                aria-label="Terminal input">
+                        {{-- Suggestions (empty state) --}}
+                        <div x-show="!started" x-transition class="flex flex-col items-center justify-center h-full gap-3">
+                            <p class="font-mono text-[11px] text-muted/50 tracking-wide">Ask me about Florin →</p>
+                            <div class="flex flex-wrap gap-2 justify-center">
+                                <template x-for="s in suggestions" :key="s">
+                                    <button @click="send(s)"
+                                            class="text-[11px] px-3 py-1.5 rounded-full border border-line bg-surface text-muted hover:text-text hover:border-accent/40 transition-colors duration-150 cursor-pointer">
+                                        <span x-text="s"></span>
+                                    </button>
+                                </template>
+                            </div>
                         </div>
+
+                        {{-- Messages --}}
+                        <div x-show="started" class="flex flex-col gap-2.5">
+                            <template x-for="(msg, i) in messages" :key="i">
+                                <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                                    <div :class="msg.role === 'user'
+                                            ? 'bg-accent text-white text-xs px-3 py-2 rounded-2xl rounded-tr-sm max-w-[78%] leading-relaxed'
+                                            : 'bg-surface text-text text-xs px-3 py-2 rounded-2xl rounded-tl-sm max-w-[82%] border border-line/50 leading-relaxed'"
+                                         x-text="msg.content">
+                                    </div>
+                                </div>
+                            </template>
+
+                            {{-- Typing indicator --}}
+                            <div x-show="loading" class="flex justify-start">
+                                <div class="bg-surface border border-line/50 px-4 py-2.5 rounded-2xl rounded-tl-sm flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-muted/50 animate-bounce" style="animation-delay:0ms"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-muted/50 animate-bounce" style="animation-delay:160ms"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-muted/50 animate-bounce" style="animation-delay:320ms"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Input bar --}}
+                    <div class="border-t border-line bg-surface shrink-0 flex items-center gap-2 px-3 py-2">
+                        <input x-ref="chatInput"
+                               x-model="input"
+                               @keydown.enter.prevent="send()"
+                               type="text"
+                               placeholder="Type a question…"
+                               :disabled="loading"
+                               autocomplete="off"
+                               spellcheck="false"
+                               class="flex-1 bg-transparent text-text text-xs placeholder:text-muted/40 outline-none min-w-0 py-1"
+                               aria-label="Chat input">
+                        <button @click="send()"
+                                :disabled="loading || !input.trim()"
+                                class="shrink-0 w-7 h-7 rounded-full bg-accent flex items-center justify-center disabled:opacity-30 transition-opacity hover:bg-accent/90 cursor-pointer">
+                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.269 20.876L5.999 12zm0 0h7.5"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>

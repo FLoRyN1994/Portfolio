@@ -171,6 +171,64 @@ window.terminalWidget = function () {
     };
 };
 
+window.chatWidget = function () {
+    return {
+        messages: [],
+        input: '',
+        loading: false,
+        started: false,
+
+        suggestions: [
+            "What's your tech stack?",
+            "Drupal experience?",
+            "Available for hire?",
+            "What kind of projects?",
+        ],
+
+        init() {
+            this.$nextTick(() => this.$refs.chatInput?.focus());
+        },
+
+        async send(text) {
+            const msg = (text ?? this.input).trim();
+            if (!msg || this.loading) return;
+
+            this.input = '';
+            this.started = true;
+            this.messages.push({ role: 'user', content: msg });
+            this.loading = true;
+            this.$nextTick(() => this.scroll());
+
+            const history = this.messages.slice(-7, -1).map(m => ({
+                role: m.role === 'user' ? 'user' : 'assistant',
+                content: m.content,
+            }));
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                    },
+                    body: JSON.stringify({ message: msg, history }),
+                });
+                const data = await res.json();
+                this.messages.push({ role: 'ai', content: data.reply || data.error || 'Something went wrong.' });
+            } catch (_) {
+                this.messages.push({ role: 'ai', content: 'Could not reach the server. Please try again.' });
+            }
+
+            this.loading = false;
+            this.$nextTick(() => this.scroll());
+        },
+
+        scroll() {
+            if (this.$refs.chatBody) this.$refs.chatBody.scrollTop = this.$refs.chatBody.scrollHeight;
+        },
+    };
+};
+
 // Hero entrance animation
 function initHero() {
     if (prefersReducedMotion()) return;

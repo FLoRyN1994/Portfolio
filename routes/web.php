@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Models\Agency;
 use App\Models\Post;
@@ -63,6 +64,8 @@ Route::get('/contact', function () {
 });
 
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:6,1');
+
+Route::post('/api/chat', [ChatController::class, 'chat'])->middleware('throttle:30,1');
 
 Route::get('/privacy', function () {
     return view('pages.privacy');
