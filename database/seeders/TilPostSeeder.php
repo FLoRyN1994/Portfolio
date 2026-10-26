@@ -173,6 +173,51 @@ class TilPostSeeder extends Seeder
                 'tags'         => ['Drupal', 'Caching', 'PHP'],
                 'published_at' => now()->subDays(30),
             ],
+            [
+                'title' => 'Drupal 11.4 ships vendor/bin/dr, an experimental core CLI',
+                'slug'  => 'drupal-11-4-native-cli-dr',
+                'content' => 'Drupal 11.4 (July 2026) introduces an experimental Symfony Console-based CLI at `vendor/bin/dr`, replacing the old hardcoded `core/scripts/drupal` entry point. It was built by a team that includes Drush maintainers — the stated plan is a gradual transition, not a hard cutover.' . "\n\n" .
+'```bash' . "\n" .
+'# Deprecated' . "\n" .
+'php core/scripts/drupal generate-theme my_theme' . "\n\n" .
+'# New' . "\n" .
+'vendor/bin/dr generate-theme my_theme' . "\n" .
+'```' . "\n\n" .
+'Modules register commands by tagging a class in `src/Command` with Symfony\'s `#[AsCommand]` attribute — no `services.yml` wiring needed, unlike a classic Drush command. Still experimental, so I wouldn\'t migrate CI scripts to it yet, but it\'s worth writing new custom commands against it.',
+                'tags'         => ['Drupal', 'CLI', 'Drush'],
+                'published_at' => now()->subDays(1),
+            ],
+            [
+                'title' => 'Drupal 11.4 locks down /search? query strings in robots.txt by default',
+                'slug'  => 'drupal-11-4-robots-txt-search-query',
+                'content' => 'Previously Drupal\'s default `robots.txt` only blocked path-based search URLs like `/search/keyword`. Query-parameter searches (`/search?q=keyword`) stayed crawlable, which let search engines index infinite combinations of faceted search pages.' . "\n\n" .
+'```' . "\n" .
+'Disallow: /search?' . "\n" .
+'Disallow: /index.php/search?' . "\n" .
+'```' . "\n\n" .
+'Only new installs and sites still using the default scaffold `robots.txt` get this automatically — if you\'ve customized yours, Drupal won\'t touch it, and you have to add the rules by hand. If you\'re on Search API with facets instead of core search, double check your own query patterns are covered too; this change only targets core\'s `/search` path.',
+                'tags'         => ['Drupal', 'SEO', 'Security'],
+                'published_at' => now()->subDays(4),
+            ],
+            [
+                'title' => 'Workspaces can\'t scope files — they land straight in live storage',
+                'slug'  => 'drupal-workspaces-files-not-revisioned',
+                'content' => 'File entities in Drupal aren\'t revisionable, so the Workspaces module has no mechanism to scope a file to a workspace the way it scopes a node. The moment a file is uploaded to `public://`, it\'s written to live storage in `sites/default/files` and served directly by the web server — no Drupal access check sits in that request path.' . "\n\n" .
+'Practical effect: if an editor stages a node that references a brand-new image, the image itself is already publicly accessible at its live URL before the workspace is ever published. There is no "staged" version of a file. Keep that in mind for any workflow that assumes staged content is fully hidden until publish.',
+                'tags'         => ['Drupal', 'Workspaces', 'Files'],
+                'published_at' => now()->subDays(7),
+            ],
+            [
+                'title' => 'The Storybook addon for SDC skips the Drush-generated stories file entirely',
+                'slug'  => 'drupal-sdc-storybook-addon-preview',
+                'content' => 'The Drupal Storybook module needs Drush to generate `*.stories.twig` scaffolding for each component. The separate `storybook-addon-sdc` npm package skips that step — it reads a component\'s `.component.yml` and Twig template directly and builds the Storybook story dynamically.' . "\n\n" .
+'```bash' . "\n" .
+'npm install --save-dev storybook-addon-sdc' . "\n" .
+'```' . "\n\n" .
+'Useful when a frontend dev without a running Drupal/Drush environment needs to iterate on a component\'s markup and CSS in Storybook alone. For anything needing Drupal\'s own render pipeline (cache contexts, token replacement, access checks), fall back to the SDC Component Library module\'s `/components` route instead — that one runs inside Drupal, not beside it.',
+                'tags'         => ['Drupal', 'SDC', 'Storybook'],
+                'published_at' => now()->subDays(9),
+            ],
         ];
 
         foreach ($posts as $data) {

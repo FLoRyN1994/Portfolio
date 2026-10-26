@@ -319,6 +319,92 @@ $nodes = \Drupal::entityTypeManager()->getStorage(\'node\')->loadMultiple($nids)
   mymodule.links.menu.yml</code></pre>
 <p>The <code>.module</code> file should be thin — just hook implementations that delegate immediately to service calls. Logic belongs in classes, not procedural functions.</p>',
             ],
+            [
+                'title' => 'Drupal 11.4\'s New Native CLI: What vendor/bin/dr Means for Drush',
+                'slug' => 'drupal-11-4-native-cli',
+                'excerpt' => 'Drupal 11.4 ships an experimental Symfony Console-based CLI at vendor/bin/dr, built by a team that includes Drush\'s own maintainers. Here\'s what changes, what stays, and how custom modules register commands.',
+                'tags' => ['Drupal', 'CLI', 'Drush'],
+                'featured' => false,
+                'published_at' => now()->subDays(1),
+                'content' => '<h2>A New Entry Point, Not a Drush Replacement (Yet)</h2>
+<p>Drupal 11.4, released July 2026, introduces an experimental native command line interface available through <code>vendor/bin/dr</code>. It replaces the old hardcoded <code>core/scripts/drupal</code> entry point with an extensible, Symfony Console-based system that can discover commands from core and enabled modules.</p>
+<p>The older entry point is now deprecated:</p>
+<pre><code># Deprecated
+php core/scripts/drupal generate-theme my_theme
+
+# New
+vendor/bin/dr generate-theme my_theme</code></pre>
+<h2>Who Built It</h2>
+<p>This isn\'t a rogue parallel project — the team behind it includes maintainers of Drush itself. The stated direction is a transitional period where Drush is gradually replaced by the core <code>dr</code> CLI over time, not an abrupt cutover. For now, both coexist.</p>
+<h2>Registering Commands From a Custom Module</h2>
+<p>Modules provide commands by placing command classes under a module\'s <code>src/Command</code> namespace and tagging them with Symfony\'s <code>AsCommand</code> attribute:</p>
+<pre><code>namespace Drupal\mymodule\Command;
+
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+#[AsCommand(name: \'mymodule:rebuild-index\', description: \'Rebuilds the custom search index.\')]
+class RebuildIndexCommand extends Command {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
+        // Rebuild logic here.
+        return Command::SUCCESS;
+    }
+}</code></pre>
+<p>Drupal discovers the command automatically once the module is enabled — no <code>services.yml</code> wiring required, which is a meaningfully lower-ceremony pattern than registering a Drush command used to be.</p>
+<h2>Should You Migrate Now?</h2>
+<p>Not yet, for most teams. The interface is explicitly experimental, and the command surface is still thin compared to Drush\'s mature ecosystem of site aliases, SQL sync, and config workflows. But if you\'re starting a custom module today, writing the command with <code>AsCommand</code> costs nothing extra and positions you for whichever direction core settles on.</p>',
+            ],
+            [
+                'title' => 'Previewing Drupal 11 Single Directory Components: Storybook vs. the SDC Component Library',
+                'slug' => 'drupal-11-sdc-storybook-vs-component-library',
+                'excerpt' => 'Two ways to preview a Single Directory Component in isolation — the Drupal Storybook module (external tooling) and the SDC Component Library module (zero dependencies, runs inside Drupal). Here\'s how they differ and when to reach for each.',
+                'tags' => ['Drupal', 'SDC', 'Frontend'],
+                'featured' => false,
+                'published_at' => now()->subDays(3),
+                'content' => '<h2>Why Preview Components in Isolation</h2>
+<p>Single Directory Components (SDC) keep a component\'s Twig template, CSS, JavaScript, and YAML definition in one folder — a stable, cornerstone feature of Drupal 11\'s theming layer. The natural next step once you have a component is previewing it without spinning up a full page render, which is where two different tools come in.</p>
+<h2>Option 1: The Storybook Module</h2>
+<p>The Drupal Storybook module provides Drush commands that generate the files Storybook needs, plus endpoints that let Storybook render the actual Drupal component rather than a reimplementation of it. You write a <code>*.stories.twig</code> file alongside your component:</p>
+<pre><code>{% stories %}
+  {% story \'Default\' %}
+    {% include \'my_theme:card\' with { title: \'Example card\', body: \'Some text\' } %}
+  {% endstory %}
+{% endstories %}</code></pre>
+<p>Multiple <code>{% story %}</code> blocks inside the same file let you demonstrate variations of the same component side by side. The trade-off is tooling overhead — Node, Storybook itself, and a build step that has to stay in sync with your Drupal theme.</p>
+<h2>Option 2: SDC Component Library (No External Tooling)</h2>
+<p>The SDC Component Library module takes a Drupal-native approach. You define props and slots in the component\'s <code>.component.yml</code> file, add a <code>.story.twig</code> file next to it, and the module scans active themes automatically and serves live previews at <code>/components</code> — inside your running Drupal site, with no Node toolchain at all.</p>
+<h2>Which One to Use</h2>
+<ul>
+<li>Pick <strong>Storybook</strong> if your team already has a frontend workflow built around it, or you need Storybook\'s wider ecosystem (visual regression testing, design system documentation, addons).</li>
+<li>Pick the <strong>SDC Component Library</strong> if you want zero additional dependencies and your reviewers are mostly working inside Drupal already — site builders and content strategists included, since there\'s nothing extra to install.</li>
+</ul>
+<p>Both require at least Drupal 10.1, though SDC\'s capabilities continue to expand specifically in Drupal 11.</p>',
+            ],
+            [
+                'title' => 'Workspaces in Drupal 11: How Content Staging Actually Works Under the Hood',
+                'slug' => 'drupal-11-workspaces-under-the-hood',
+                'excerpt' => 'Workspaces went stable in Drupal core back in 10.3 and ships with every Drupal 11 install. Past the marketing pitch of "stage then publish," here\'s the actual architecture — ContentWorkspace entities, computed fields, and the one thing it still can\'t scope.',
+                'tags' => ['Drupal', 'Workspaces', 'Content Staging'],
+                'featured' => false,
+                'published_at' => now()->subDays(6),
+                'content' => '<h2>What Problem It Solves</h2>
+<p>Before Workspaces, staging a large batch of content and configuration changes meant maintaining a separate staging site and manually syncing a deploy — slow, error-prone, and nearly impossible to do atomically. Workspaces lets a privileged user stage changes, preview them exactly as a visitor would see them, and publish the entire batch at once, without a second site to maintain.</p>
+<h2>The Architecture</h2>
+<p>Two workspaces — <code>live</code> and <code>stage</code> — are created on installation. The default workspace is the one anonymous visitors see, and critically, <strong>no queries or entity loads are altered for the default workspace</strong> — so sites that never touch Workspaces pay zero overhead.</p>
+<p>Content created inside a non-default workspace is saved as unpublished at the entity level. The real published state lives on a separate <code>ContentWorkspace</code> entity — conceptually similar to how Content Moderation tracks state via <code>ContentModerationState</code>:</p>
+<pre><code>// Simplified: the published flag on the node itself stays FALSE
+// while a workspace is active. ContentWorkspace tracks the "real" state.
+$content_workspace = ContentWorkspace::load($node->getRevisionId());</code></pre>
+<p>A computed <code>entity_reference</code> field named <code>workspace</code> is added to every entity type that can belong to one. When you\'re inside a non-default workspace, Drupal alters entity queries to join the <code>ContentWorkspace</code> revision table and only load entities that belong to the active workspace or the default one.</p>
+<h2>Replication and Upstreams</h2>
+<p>Publishing a workspace is handled by a tagged replication service — the default implementation diffs the two workspaces, loops through every changed revision, and saves it onto the target. Because replication is a swappable service, contrib modules can hook in and replicate against something other than another Drupal workspace entirely — another site, even a non-Drupal system, via the plugin-based "upstream" concept.</p>
+<h2>The Caveat Nobody Mentions First</h2>
+<p>Files aren\'t revisionable in Drupal, so Workspaces can\'t scope them the way it scopes nodes. The moment a file lands in <code>public://</code>, it\'s written straight to live storage and served directly by the web server — there\'s no Drupal access check in that request path, and no "staged" version of a file exists. If your workflow depends on previewing a new hero image before it goes live, that part still needs a manual process.</p>
+<h2>Extending It</h2>
+<p>For teams that need actual tree-shaped revision history — parent and merge-parent relationships, not just a flat live/stage split — the contrib <strong>Revision Tree</strong> module builds on top of core Workspaces rather than replacing it, adding a "Rebuild associations" operation for when things drift.</p>',
+            ],
         ];
 
         foreach ($posts as $data) {
