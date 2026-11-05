@@ -223,3 +223,11 @@
         animation: orb-pulse 6s ease-in-out infinite;
     }
 }
+
+/* Unlayered: must win over @tailwindcss/typography's utilities-layer
+   .prose code color, which otherwise overrides @layer components
+   regardless of selector specificity. */
+.prose-dark code,
+.blog-content :not(pre) > code {
+    color: var(--color-text);
+}
