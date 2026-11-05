@@ -98,6 +98,7 @@
     .prose-dark a { color: var(--color-accent); }
     .prose-dark code {
         background: rgba(79, 140, 255, 0.08);
+        color: var(--color-text);
         padding: 0.15em 0.4em;
         border-radius: 4px;
         font-size: 0.875em;
@@ -143,6 +144,7 @@
         background: rgba(79, 140, 255, 0.08);
         border: 1px solid rgba(79, 140, 255, 0.15);
         border-radius: 5px;
+        color: var(--color-text);
         font-family: var(--font-mono);
     }
     .blog-content :not(pre) > code::before,
