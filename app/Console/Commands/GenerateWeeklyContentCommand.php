@@ -82,6 +82,7 @@ PROMPT;
 
         $text = trim($response->json('content.0.text', ''));
         $text = preg_replace('/^```(?:json)?\s*|\s*```$/', '', $text);
+        $text = $this->escapeControlCharsInStrings($text);
         $data = json_decode($text, true);
 
         if (! is_array($data) || ! isset($data['blog'], $data['til'])) {
@@ -128,6 +129,64 @@ PROMPT;
         $this->info("Published TIL entry: {$til['title']}");
 
         return self::SUCCESS;
+    }
+
+    private function escapeControlCharsInStrings(string $json): string
+    {
+        $validEscapes = ['"', '\\', '/', 'b', 'f', 'n', 'r', 't', 'u'];
+        $chars = preg_split('//u', $json, -1, PREG_SPLIT_NO_EMPTY);
+        $result = '';
+        $inString = false;
+        $i = 0;
+        $count = count($chars);
+
+        while ($i < $count) {
+            $char = $chars[$i];
+
+            if ($inString) {
+                if ($char === '\\') {
+                    $next = $chars[$i + 1] ?? '';
+
+                    if (in_array($next, $validEscapes, true)) {
+                        $result .= $char.$next;
+                        $i += 2;
+
+                        continue;
+                    }
+
+                    $result .= '\\\\';
+                    $i++;
+
+                    continue;
+                }
+
+                if ($char === '"') {
+                    $inString = false;
+                } elseif ($char === "\n") {
+                    $result .= '\\n';
+                    $i++;
+
+                    continue;
+                } elseif ($char === "\r") {
+                    $result .= '\\r';
+                    $i++;
+
+                    continue;
+                } elseif ($char === "\t") {
+                    $result .= '\\t';
+                    $i++;
+
+                    continue;
+                }
+            } elseif ($char === '"') {
+                $inString = true;
+            }
+
+            $result .= $char;
+            $i++;
+        }
+
+        return $result;
     }
 
     private function uniqueSlug(string $model, string $slug): string
